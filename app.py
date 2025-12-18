@@ -1,14 +1,15 @@
 # app.py
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
-from models import db, Users, init_db
-from config import SQLALCHEMY_DATABASE_URI
+from models import db, Users, Agents, Rendfokozat, Beosztasok
+from models import init_db
+#from config import SQLALCHEMY_DATABASE_URI
 from werkzeug.security import check_password_hash
+from config import Config
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = '@H4Z4DN4K_r3ndul3tl3nul_L3GYHiV3_0h_M4GY4R!_sir0d_L3SZ_3z!'
+
+app.config.from_object(Config)
 
 init_db(app)
 
@@ -23,24 +24,50 @@ def login_required(f):
 
 @app.route('/logincheck', methods=['GET', 'POST'])
 def logincheck():
-#    flash('A rendszer üzenetküldése aktív!', 'info')
     if request.method == 'POST':
         data = request.form.get('credentials')
-        if not data or '+' not in data:
-            return "Hibás formátum!", 400
-
         input_nick, input_pass = data.split('+', 1)
         users = db.session.query(Users).all()
-
         for user in users:
             if check_password_hash(user.agentNick, input_nick):
                 if check_password_hash(user.agentPassword, input_pass):
-                    session['user_id'] = user.id
-                    return f"Siker! Üdv, {input_nick}"
 
-        return "Hibás adatok!", 401
+                    # 1. Ügynök keresése (mivel mondtad, hogy az agentId helyett id van)
+                    agent_data = db.session.query(Agents).filter_by(id=user.agentId).first()
 
+                    if agent_data and agent_data.valid_e:
+
+                        # 2. rang és beosztás kibányászása
+                        rank_data = db.session.query(Rendfokozat).filter_by(id=agent_data.rendfokozat).first()
+                        beo = db.session.query(Beosztasok).filter_by(id=agent_data.beosztas).first()
+
+                        # Biztonsági ellenőrzés, ha véletlenül nincs meg a kód a táblában
+                        rank_name = rank_data.rendfokozat if rank_data else "Ismeretlen"
+
+                        # 3. SESSION feltöltése minden jóval
+                        session['user_id'] = user.agentId
+                        session['user_titulus'] = agent_data.titulus
+                        session['user_neve'] = agent_data.nev
+                        session['user_rendfokozat'] = rank_name
+                        session['user_beosztas'] = beo.beosztas
+                        #session['agent_rank_id'] = agent_data.rendfokozat  # A kód is meglehet
+
+                        #flash(f"Üdvözlöm, {rank_name} {agent_data.nev}!", "success")
+                        return redirect(url_for('main'))
+
+        flash("Hibás adatok!", "danger")
+        return redirect(url_for('login'))
     return render_template('main.html')
+
+@app.route('/main')
+@login_required
+def main():
+    return render_template('main.html')
+
+@app.route('/persec')
+@login_required
+def persec():
+    return render_template('szemelyibiztonsag.html')
 
 @app.route('/')
 def login():
@@ -48,7 +75,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.clear()  # Minden adatot törlünk a munkamenetből
+    session.clear()
     #flash('Sikeresen kijelentkeztél.')
     return redirect(url_for('login'))
 

@@ -1,37 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
-    <title>{% block title %}Alapértelmezett Cím{% endblock %} - {{ project_name }}</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{{ url_for('static', filename='img/magyar_cimer.png') }}" type="image/png">
+    <title>{% block title %}vtrHBF{% endblock %}</title>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        html, body {
+            height: 100vh; /* teljes képernyős magasság */
+            margin: 0;
+            overflow: hidden; /* nincs külső görgetés : asztali app jelleg */
+            display: flex;
+            flex-direction: column; /* egymás alá cuccolja a tartalmat, main-t és footert */
+        }
+
+        body {
+            background-image:
+                url('/static/img/niklogo.png'),
+                url('/static/img/dark_wallpaper.jpg');
+            background-repeat: no-repeat, no-repeat;
+            background-size: 600px auto, cover;
+            background-position: center center, center center;
+            background-attachment: fixed;
+        }
+
+        /* A tartalom helye, ami görgethető lesz, ha kell */
+        main {
+            flex: 1; /* Kitölti a maradék helyet a footer felett */
+            overflow-y: auto; /* Itt lesz a belső görgetés a listáknak */
+            padding: 20px;
+        }
+
+        .footer-container {
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white;
+            text-align: center;
+            width: calc(100% - 3rem);
+            margin-bottom: 1rem !important;
+        }
+
+        .flashes { list-style: none; padding: 10px; }
+    </style>
 </head>
 <body>
-<!--
-    <nav>
-        <a href="{{ url_for('hello_world') }}">Főoldal</a> |
-        <a href="{{ url_for('about_page') }}">Rólunk</a> |
-        <a href="{{ url_for('contact') }}">Kapcsolat</a>
-    </nav>
 
-    <hr>
--->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <ul class="flashes">
+        <div class="container mt-2">
         {% for category, message in messages %}
-          <li class="{{ category }}">{{ message }}</li>
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
         {% endfor %}
-        </ul>
+        </div>
       {% endif %}
     {% endwith %}
 
-    {% block content %}
-    {% endblock %}
-
 <!--
-    <footer>
-        <p>&copy; Copyright {{ current_year }} | Készítette: {{ project_name }}</p>
-    </footer>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded mt-2 mx-2" style="background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(0,123,255,0.3), rgba(200,200,200,0.3));  position: relative; z-index: 1000;">
+        <div class="container-fluid position-relative">
+            <a class="navbar-brand" style="font-weight:bold; color:#0E4C92;" href="/main">
+                <img src="{{ url_for('static', filename='img/magyar_cimer.png') }}" height="30" class="d-inline-block align-top ms-2" alt="">
+                Főmenü
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav position-absolute start-50 translate-middle-x d-flex flex-nowrap">
+                    <li class="nav-item">
+                        <a id="szemelyibiztonsag" class="nav-link" style="font-weight: bold; color: #000000;" href="/main" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="SzBT-k és TtNy-ek"><i ></i> Személyi biztonság</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="rendszerengedelyek" class="nav-link" style="font-weight: bold; color: #000000;" href="/main" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Rendszerengedélyek"> Rendszerengedélyek</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="Felvételi eljárások" class="nav-link" style="font-weight: bold; color: #000000;" href="/main" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Felvételi eljárás alatt álló személyek"> Felvételi eljárások</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto d-flex flex-nowrap">
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-weight: bold; color: #BC0D0D;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" href="/logout">
+                            <i class="fas fa-power-off"></i> Kijelentkezés
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="offcanvas" href="#offcanvasAdminMenu" role="button" aria-controls="offcanvasAdminMenu">
+                            <span class="navbar-toggler-icon"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 -->
+
+
+
+
+
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="container-fluid footer-container mb-2 mx-auto text-secondary-emphasis rounded-4 border border-3 p-2"
+            style="width: calc(100% - 1.5rem);">
+        <div class="row align-items-center">
+            <div class="col text-start">
+                <h5 class="m-0" style="color: #e2b275">
+                    {{ session.get('user_titulus', '') }} {{ session.get('user_neve', '') }} nb. {{ session.get('user_rendfokozat', 'Vendég')}} [{{session.get('user_beosztas', 'Jómunkásembör')}}]
+                </h5>
+            </div>
+            <div class="col text-center text-white-50">
+                <h5 class="m-0 fw-bold" style="color: #e2b275">vtrHBF w2025.12 [teszt]</h5>
+            </div>
+            <div class="col text-end text-white">
+                <h5 class="m-0" style="color: #e2b275">IP: {{ request.remote_addr }}</h5>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

@@ -1,11 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 
-# 1. Itt jön létre az egyetlen, közös db objektum
 db = SQLAlchemy()
 
-# 2. Itt regisztráljuk a modellt a db-hez
 from models.users import Users
+from models.agents import Agents
+from models.rendfokozat import Rendfokozat
+from models.beosztasok import Beosztasok
 
 def init_db(app):
-    """Ezt hívjuk meg az app.py-ban"""
     db.init_app(app)

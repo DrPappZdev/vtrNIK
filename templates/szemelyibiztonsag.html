@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Főoldal{% endblock %}
+
+{% block content %}
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded mt-2" style="background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(0,123,255,0.3), rgba(200,200,200,0.3));  position: relative; z-index: 1000;">
+        <div class="container-fluid position-relative">
+            <a class="navbar-brand" style="font-weight:bold; color:#0E4C92;" href="/main">
+                <img src="{{ url_for('static', filename='img/magyar_cimer.png') }}" height="30" class="d-inline-block align-top ms-2" alt="">
+                Főmenü
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav position-absolute start-50 translate-middle-x d-flex flex-nowrap">
+                    <li class="nav-item">
+                        <a id="persec_kereses" class="nav-link" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="SzBT-k és TtNy-ek"><i ></i>Keresés</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" style="font-weight: bold; color: #0080FF;" href="#" id="persec_szures" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-placement="bottom" data-bs-html="true" data-bs-auto-close="true"><i class="bi bi-search"></i> Szűrés</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="z-index: 1000;">
+                            <a id="search_org" class="dropdown-item" href="#">Szervezeti elemre</a>
+                            <a id="search_clearence" class="dropdown-item" href="#">Lejáró személyi biztonsági tanúsítványokra (nemzeti)</a>
+                            <a id="search_number" class="dropdown-item" href="#">Keresés rekordazonosítóra</a>
+                            <a id="search_complex" class="dropdown-item disabled" href="#" disabled>Összetett szűkítés</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a id="persec_ujkollega" class="nav-link" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="SzBT-k és TtNy-ek"><i ></i>Új személy rögzítése</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="persec_archivum" class="nav-link" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="SzBT-k és TtNy-ek"><i ></i>Archívum</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto d-flex flex-nowrap">
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-weight: bold; color: #BC0D0D;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" href="/logout">
+                            <i class="fas fa-power-off"></i> Kijelentkezés
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+{% endblock %}

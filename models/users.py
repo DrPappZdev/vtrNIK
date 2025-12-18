@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from models import db  # Fontos: a közös db-t használja!
+from models import db
 
 class Users(db.Model):
     __tablename__ = 'users'
