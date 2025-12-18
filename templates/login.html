@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="{{ url_for('static', filename='img/magyar_cimer.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
+    <title>Bejelentkezés</title>
+    <style>
+        body {
+            background-image:
+                url('../static/img/niklogo.png'),
+                url('../static/img/dark_wallpaper.jpg');
+            background-repeat: no-repeat, no-repeat;
+            background-size: 400px auto, cover;
+            background-position: center 10%, center center;
+            background-attachment: fixed;
+            margin: 0;
+        }
+
+        .login-container {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px 40px; /* 20px fent/lent, 40px oldalt */
+            border-radius: 15px;
+            width: 300px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-container h2 {
+            margin-top: 0;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e2b275 /*007bff*/;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #fa802a; /*#b1560f;*/ /*0056b3*/
+        }
+
+    </style>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category if category != 'message' else 'info' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <div class="login-container">
+        <form method="POST" action="/logincheck">
+            <h2 style="color: #e2b275">Bejelentkezés</h2>
+            <div class="input-group">
+                <input type="password" name="credentials" autofocus placeholder="Azonosító" autocomplete="off" required>
+            </div>
+            <button type="submit">Belépés</button>
+        </form>
+    </div>
+</body>
+</html>

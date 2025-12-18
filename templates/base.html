@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Alapértelmezett Cím{% endblock %} - {{ project_name }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<!--
+    <nav>
+        <a href="{{ url_for('hello_world') }}">Főoldal</a> |
+        <a href="{{ url_for('about_page') }}">Rólunk</a> |
+        <a href="{{ url_for('contact') }}">Kapcsolat</a>
+    </nav>
+
+    <hr>
+-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
+
+<!--
+    <footer>
+        <p>&copy; Copyright {{ current_year }} | Készítette: {{ project_name }}</p>
+    </footer>
+-->
+</body>
+</html>
