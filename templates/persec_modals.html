@@ -1,0 +1,56 @@
+<div class="modal fade" id="mdl_Search" tabindex="-1" aria-labelledby="mdl_SearchLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;"> <div class="modal-content" style="background-color: #121212 !important; border: 2px solid #e2b275 !important; border-radius: 12px; color: #e2b275 !important; box-shadow: 0 0 25px rgba(0,0,0,0.8);">
+
+            <div class="modal-header py-2" style="border-bottom: 1px solid rgba(226, 178, 117, 0.2);">
+                <h5 class="modal-title fw-bold" id="mdl_SearchLabel" style="color: #e2b275 !important; font-size: 1rem;">Gyorskeresés</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) sepia(1) saturate(5); transform: scale(0.8);"></button>
+            </div>
+
+            <div class="modal-body py-2" style="background: transparent !important;">
+                <input type="hidden" id="amitKeresunk" value="0">
+
+                <label for="requesterData" class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8); font-size: 0.75rem;">Keresés névre, vagy névtöredékre:</label>
+
+                <input type="text" class="form-control fw-bold form-control-sm" id="requesterData" placeholder="Írd be a nevet..."
+                       style="background-color: #222 !important; border: 1px solid #e2b275 !important; color: #ffffff !important; padding: 8px;">
+            </div>
+
+            <div class="d-flex justify-content-center my-2" id="btnradioGroup_Search">
+                <div class="btn-group w-100 mx-3" role="group">
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio_Aktiv" autocomplete="off" checked>
+                    <label class="btn btn-outline-warning custom-radio py-1" for="btnradio_Aktiv">Aktívak</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio_Inaktiv" autocomplete="off">
+                    <label class="btn btn-outline-warning custom-radio py-1" for="btnradio_Inaktiv">Archív</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio_All" autocomplete="off">
+                    <label class="btn btn-outline-warning custom-radio py-1" for="btnradio_All">Mind</label>
+                </div>
+            </div>
+
+            <div class="modal-footer py-2" style="border-top: 1px solid rgba(226, 178, 117, 0.2);">
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal" style="background-color: #333; border: 1px solid #555; color: #fff;">
+                    Mégse
+                </button>
+                <button type="button" class="btn btn-sm" id="searchBtn" style="background-color: #e2b275 !important; border: none; color: #000; font-weight: bold; padding-left: 20px; padding-right: 20px;">
+                    <i class="bi bi-search"></i> Keresés
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.custom-radio {
+    border-color: #e2b275 !important;
+    color: #e2b275 !important;
+    font-size: 0.75rem !important; /* Kisebb betűk a gombokon */
+    font-weight: bold !important;
+}
+
+.btn-check:checked + .custom-radio {
+    background-color: rgba(226, 178, 117, 0.2) !important;
+    color: #ffffff !important;
+    border-color: #e2b275 !important;
+}
+</style>

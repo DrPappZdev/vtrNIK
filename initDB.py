@@ -7,9 +7,9 @@ from datetime import datetime, timezone
 
 # A 3 teszt felhasználó adatai
 users_to_seed = [
-    (101, "PappZ", "PappZTitok"),
+    #(101, "PappZ", "PappZTitok"),
     (102, "IllesD", "IllesDTitok"),
-    (103, "TesztE", "TesztETitok")
+    #(103, "TesztE", "TesztETitok")
 ]
 
 
@@ -27,7 +27,7 @@ def seed_database():
         except Exception:
             count = 0
 
-        if count > 0:
+        if count > 100:
             print(f"Az adatbázis már tartalmaz {count} felhasználót. Megállunk.")
             return
 

@@ -27,6 +27,8 @@ def logincheck():
     if request.method == 'POST':
         data = request.form.get('credentials')
         input_nick, input_pass = data.split('+', 1)
+        print(input_nick, " :: ", input_pass)
+
         users = db.session.query(Users).all()
         for user in users:
             if check_password_hash(user.agentNick, input_nick):
@@ -43,8 +45,8 @@ def logincheck():
 
                         # Biztonsági ellenőrzés, ha véletlenül nincs meg a kód a táblában
                         rank_name = rank_data.rendfokozat if rank_data else "Ismeretlen"
+                        print("agentData ", agent_data.beosztas, input_pass, "  ", input_nick, " ", rank_name , " ", beo.beosztas)
 
-                        # 3. SESSION feltöltése minden jóval
                         session['user_id'] = user.agentId
                         session['user_titulus'] = agent_data.titulus
                         session['user_neve'] = agent_data.nev
@@ -52,7 +54,6 @@ def logincheck():
                         session['user_beosztas'] = beo.beosztas
                         #session['agent_rank_id'] = agent_data.rendfokozat  # A kód is meglehet
 
-                        #flash(f"Üdvözlöm, {rank_name} {agent_data.nev}!", "success")
                         return redirect(url_for('main'))
 
         flash("Hibás adatok!", "danger")
