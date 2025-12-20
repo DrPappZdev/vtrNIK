@@ -12,31 +12,16 @@ class Config:
     DB_SERVER = os.getenv('DB_SERVER')
     DB_NAME = os.getenv('DB_NAME')
 
+    APP_ORG = os.getenv('APP_ORG')
+    APP_SHORTORG = os.getenv('APP_SHORTORG')
+    APP_SHORTNAME = os.getenv('APP_SHORTNAME')
+    APP_LONGNAME = os.getenv('APP_LONGNAME')
+    APP_LOGO = os.getenv('APP_LOGO')
+    APP_LOGOSIZE = int(os.getenv('APP_LOGOSIZE', 30))
+    APP_VER = os.getenv('APP_VER')
+
     SQLALCHEMY_DATABASE_URI = (
         f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}/{DB_NAME}"
         "?driver=ODBC+Driver+17+for+SQL+Server"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-'''
-import urllib
-from flask_sqlalchemy import SQLAlchemy
-
-DB_CONFIG = {
-    'server': 'localhost,1433',
-    'database': 'vtrHBF',
-    'username': 'pappz',
-    'password': 'PappZ2024',
-    'driver': 'ODBC Driver 17 for SQL Server'
-}
-
-params = urllib.parse.quote_plus(
-    f"DRIVER={DB_CONFIG['driver']};"
-    f"SERVER={DB_CONFIG['server']};"
-    f"DATABASE={DB_CONFIG['database']};"
-    f"UID={DB_CONFIG['username']};"
-    f"PWD={DB_CONFIG['password']}"
-)
-
-SQLALCHEMY_DATABASE_URI = f"mssql+pyodbc:///?odbc_connect={params}"
-'''

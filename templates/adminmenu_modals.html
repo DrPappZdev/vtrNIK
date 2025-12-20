@@ -1,0 +1,111 @@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAdminMenu" aria-labelledby="offcanvasAdminMenuLabel"
+    style="
+        background: rgba(18, 18, 18, 0.95) !important;
+        backdrop-filter: blur(15px);
+        border: 2px solid #e2b275 !important;
+        color: #e2b275;
+        width: 350px;
+
+        /* LEBEGŐ ÉS TARTALOMHOZ IGAZODÓ MAGASSÁG */
+        top: 85px !important;       /* A Navbar alá pozicionálva */
+        right: 20px !important;     /* Távolság a jobb szélétől */
+        height: auto !important;    /* CSAK AKKORA LEGYEN, AMÍG A TARTALOM TART */
+        max-height: 85vh !important; /* De ne lógjon le a képernyőről, ha túl sok a menüpont */
+
+        border-radius: 20px !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
+
+        /* Bootstrap alaphelyzet felülírása a lebegéshez */
+        bottom: auto !important;
+        transition: transform 0.3s ease-in-out;
+    ">
+
+    <div class="offcanvas-header" style="border-bottom: 1px solid rgba(226, 178, 117, 0.3); padding: 1rem 1.5rem;">
+        <h4 class="offcanvas-title fw-bold" id="offcanvasAdminMenuLabel" style="color: #e2b275; font-size: 1.2rem;">Rendszermenü</h4>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: invert(1) sepia(1) saturate(5);"></button>
+    </div>
+
+    <div class="offcanvas-body" style="padding: 1.5rem;">
+        <div class="mb-3">
+            <h6 class="fw-bold small border-bottom pb-2" style="color: #ffffff; opacity: 0.7;">Funkciók</h6>
+        </div>
+
+        <div class="dropdown mb-2">
+            <button class="btn btn-admin-dropdown dropdown-toggle w-100 text-start" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-people-fill me-2"></i> Felhasználók
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" style="border: 1px solid #e2b275; background: #222;">
+                <li><a class="dropdown-item" href="#"><i class="bi bi-people"></i> Felhasználók kezelése</a></li>
+                <li><a class="dropdown-item" href="#"><i class="bi bi-card-checklist"></i> Jogosultságok kezelése</a></li>
+            </ul>
+        </div>
+        <div class="dropdown mb-2">
+            <button class="btn btn-admin-dropdown dropdown-toggle w-100 text-start" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-list-task"></i> Listák / Legyűjtések
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" style="border: 1px solid #e2b275; background: #222;">
+                <li><a class="dropdown-item" href="#"><i class="bi bi-list-ol"></i> Lejáró SzBT-k (60 nap)</a></li>
+                <li><a class="dropdown-item text-warning" href="#"><i class="bi bi-list"></i> NATO/EU SzBT lista </a></li>
+                <li><a class="dropdown-item text-warning" href="#"><i class="bi bi-list"></i> stb... </a></li>
+            </ul>
+        </div>
+
+        <hr style="border-color: rgba(226, 178, 117, 0.3); margin: 1rem 0;">
+        <ul class="list-unstyled mb-0">
+            <li class="mb-2"><a href="#" class="nav-link admin-link"><i class="bi bi-gear-fill"></i> {{ config['APP_SHORTNAME'] }} beállításai</a></li>
+            <li class="mb-2"><a href="#" class="nav-link admin-link"><i class="bi bi-building me-2"></i> Partnerek</a></li>
+            <li class="mb-2">
+                <a href="#" class="nav-link admin-link text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#dr_Delete">
+                    <i class="bi bi-trash3-fill me-2"></i> <span style="color:red">Törlés</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link admin-link" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                    <i class="bi bi-info-circle me-2"></i> Névjegy
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+/* Egyedi stílusok az Admin Offcanvas-hoz */
+.admin-link {
+    color: #ffffff !important;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    display: block;
+    text-decoration: none;
+}
+
+.admin-link:hover {
+    background: rgba(226, 178, 117, 0.15);
+    color: #e2b275 !important;
+    padding-left: 20px;
+}
+
+.btn-admin-dropdown {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(226, 178, 117, 0.3) !important;
+    color: #ffffff !important;
+    padding: 10px 15px;
+    transition: all 0.3s;
+}
+
+.btn-admin-dropdown:hover, .btn-admin-dropdown:focus {
+    border-color: #e2b275 !important;
+    background: rgba(226, 178, 117, 0.1) !important;
+    color: #e2b275 !important;
+}
+
+.dropdown-item {
+    color: #ffffff !important;
+    padding: 10px 20px;
+}
+
+.dropdown-item:hover {
+    background-color: #e2b275 !important;
+    color: #000000 !important;
+}
+</style>

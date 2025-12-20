@@ -2,8 +2,8 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="{{ url_for('static', filename='img/magyar_cimer.png') }}" type="image/png">
-    <title>{% block title %}vtrHBF{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" type="image/png">
+    <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -14,15 +14,15 @@
             margin: 0;
             overflow: hidden; /* nincs külső görgetés : asztali app jelleg */
             display: flex;
-            flex-direction: column; /* egymás alá cuccolja a tartalmat, main-t és footert */
+            flex-direction: column; /* egymás alá cuccolja a tartalmat, main-t mög a footert */
         }
 
         body {
             background-image:
-                url('/static/img/niklogo.png'),
+                url('/static/img/{{ config['APP_LOGO'] }}'),
                 url('/static/img/dark_wallpaper.jpg');
             background-repeat: no-repeat, no-repeat;
-            background-size: 600px auto, cover;
+            background-size: {{ config['APP_LOGOSIZE'] ~ "vmin" }} auto, cover;
             background-position: center center, center center;
             background-attachment: fixed;
         }
@@ -78,7 +78,7 @@
                 </h5>
             </div>
             <div class="col text-center text-white-50">
-                <h5 class="m-0 fw-bold" style="color: #e2b275">vtrHBF w2025.12 [teszt]</h5>
+                <h5 class="m-0 fw-bold" style="color: #e2b275">{{ config['APP_SHORTORG'] }} {{ config['APP_LONGNAME'] }} [{{ config['APP_VER'] }}]</h5>
             </div>
             <div class="col text-end text-white">
                 <h5 class="m-0" style="color: #e2b275">IP: {{ request.remote_addr }}</h5>

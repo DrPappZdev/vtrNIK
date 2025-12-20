@@ -1,22 +1,14 @@
 // Megvárjuk, amíg az ablak és minden erőforrás betölt
+
 window.addEventListener('load', function () {
     console.log("App Logic betöltve...");
 
-    // Ellenőrizzük, hogy a bootstrap objektum létezik-e
     if (typeof bootstrap !== 'undefined') {
-        console.log("Bootstrap motor aktív.");
-
-        // 1. Tooltip-ek (csak ha vannak)
+        // 1. Tooltip-ek inicializálása (az Offcanvas-ban lévők is!)
         const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        tooltips.forEach(t => {
-            try {
-                new bootstrap.Tooltip(t);
-            } catch (e) {
-                console.warn("Tooltip hiba egy elemnél:", e);
-            }
-        });
+        tooltips.forEach(t => new bootstrap.Tooltip(t));
 
-        // 2. Modal fókuszálás
+        // 2. Kereső Modal fókuszálás (ezt már ismered)
         const searchModal = document.getElementById('mdl_Search');
         if (searchModal) {
             searchModal.addEventListener('shown.bs.modal', function () {
@@ -24,9 +16,22 @@ window.addEventListener('load', function () {
                 if (input) input.focus();
             });
         }
+
+        // 3. Dropdown-ok kényszerített inicializálása (opcionális, ha nem nyílnának)
+        const dropdowns = document.querySelectorAll('.dropdown-toggle');
+        dropdowns.forEach(dd => new bootstrap.Dropdown(dd));
+
     } else {
         console.error("HIBA: A Bootstrap motor nem töltődött be!");
     }
+});
+
+
+
+
+
+
+
 
     // 3. Keresés gomb (ez bootstrap nélkül is mehet)
     const searchBtn = document.getElementById("searchBtn");
@@ -34,7 +39,7 @@ window.addEventListener('load', function () {
         searchBtn.addEventListener("click", function () {
             const query = document.getElementById("requesterData").value;
             if (query.trim() === "") {
-                alert("Kérlek írj be valamit!");
+                alert("Kérlek előbb írj be valamit!");
             } else {
                 console.log("Keresés indítása: " + query);
             }

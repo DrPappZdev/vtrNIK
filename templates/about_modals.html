@@ -1,0 +1,43 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="aboutModal">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px;">
+    <div class="modal-content" style="
+        background-color: #121212 !important;
+        border: 2px solid #e2b275 !important;
+        border-radius: 20px;
+        color: #e2b275 !important;
+        box-shadow: 0 0 30px rgba(0,0,0,0.8);">
+
+      <div class="modal-body text-center py-4">
+        <div id="checkIcon">
+          <img src="{{ url_for('static', filename='img/' + config.APP_LOGO) }}" height="80" class="d-inline-block align-top mb-2" alt="NIK">
+        </div>
+
+        <div class="mt-3 py-2">
+            <p class="px-4 pb-0 mb-1 fw-bold" style="color: rgba(255,255,255,0.6); letter-spacing: 2px; font-size: 0.8rem;">{{ config['APP_SHORTNAME'] }}</p>
+            <h3 class="h5 fw-bold text-white mb-1" style="white-space: nowrap;">{{ config['APP_ORG'] }}</h3>
+            <h4 class="h5" style="color: #e2b275;">{{ config['APP_LONGNAME'] }}</h4>
+            <p class="px-4 pb-0 mb-1 fw-bold" style="color: rgba(255,255,255,0.6); letter-spacing: 2px; font-size: 0.8rem;">v.6.1</p>
+        </div>
+
+        <div class="pt-3">
+            <button type="button" class="btn btn-sm rounded-pill px-5 fw-bold"
+                    data-bs-dismiss="modal"
+                    style="background-color: #e2b275; color: #000; border: none; transition: 0.3s;">
+                OK
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    #checkIcon img {
+      filter: drop-shadow(0px 0px 10px rgba(226, 178, 117, 0.3));
+      padding: 5px;
+    }
+    #successModal .btn:hover {
+        background-color: #c4965d !important;
+        transform: scale(1.05);
+    }
+</style>

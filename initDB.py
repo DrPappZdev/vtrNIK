@@ -5,11 +5,11 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 from datetime import datetime, timezone
 
-# A 3 teszt felhasználó adatai
+# A teszt felhasználó adatok
 users_to_seed = [
-    #(101, "PappZ", "PappZTitok"),
-    (102, "IllesD", "IllesDTitok"),
-    #(103, "TesztE", "TesztETitok")
+    #(1, "PappZ", "PappZTitok"),
+    (2, "IllesD", "IllesDTitok"),
+    #(3, "TesztE", "TesztETitok")
 ]
 
 
@@ -39,7 +39,7 @@ def seed_database():
 
             # Mezők feltöltése
             u.agentId = aid
-            # Mindkét mezőt hash-eljük a kérésed szerint
+            # Mindkét mezőt hash-eli
             u.agentNick = generate_password_hash(nick, method='pbkdf2:sha256')
             u.agentPassword = generate_password_hash(password, method='pbkdf2:sha256')
 
