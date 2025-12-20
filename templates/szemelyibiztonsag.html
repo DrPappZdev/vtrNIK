@@ -12,7 +12,7 @@
                 z-index: 1000;">
         <div class="container-fluid position-relative">
             <a class="navbar-brand" style="font-weight:bold; color:#e0e0e0;" href="/main">
-                <img src="{{ url_for('static', filename='img/magyar_cimer.png') }}" height="30" class="d-inline-block align-top ms-2" alt="">
+                <img src="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" height="30" class="d-inline-block align-top ms-2" alt="">
                 Főmenü
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">

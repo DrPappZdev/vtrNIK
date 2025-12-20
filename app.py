@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
-from models import db, Users, Agents, Rendfokozat, Beosztasok
+from models import db, Users, Agents, Rendfokozat, Beosztasok, Jogok
 from models import init_db
 #from config import SQLALCHEMY_DATABASE_URI
 from werkzeug.security import check_password_hash
@@ -23,6 +23,38 @@ def login_required(f):
             return redirect(url_for('login', next=request.path))
         return f(*args, **kwargs)
     return decorated_function
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('A kért oldal eléréséhez be kell jelentkezned!')
+            # Itt adjuk hozzá a 'next' paramétert!
+            return redirect(url_for('login', next=request.path))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def permission_required(function_column):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_id = session.get('user_id')
+            if not user_id:
+                return redirect(url_for('login'))
+            user_perms = session.get('user_permissions', {})
+            if not user_perms.get(function_column, False):
+                log_event(
+                    userid=user_id,
+                    event_type="PAGE_LOAD_UNAUTHORIZED_ACCESS",
+                    description=f"Illetéktelen belépési kísérlet a(z) {function_column} oldalra",
+                    table_name = "user",
+                    record_id = 0
+                )
+                flash("Nincs jogosultsága a kért művelethez!", "danger")
+                return redirect(url_for('main'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 @app.route('/logincheck', methods=['GET', 'POST'])
 def logincheck():
@@ -62,7 +94,6 @@ def logincheck():
 
                         # Biztonsági ellenőrzés, ha véletlenül nincs meg a kód a táblában
                         rank_name = rank_data.rendfokozat if rank_data else "Ismeretlen"
-                        print("agentData ", agent_data.beosztas, input_pass, "  ", input_nick, " ", rank_name , " ", beo.beosztas)
 
                         session['user_id'] = user.agentId
                         session['user_titulus'] = agent_data.titulus
@@ -70,6 +101,15 @@ def logincheck():
                         session['user_rendfokozat'] = rank_name
                         session['user_beosztas'] = beo.beosztas
                         userNeve = session.get('user_neve', '')
+                        user_jogok = Jogok.query.filter_by(agentId=user.agentId).first()
+                        if user_jogok:
+                            permissions = {
+                                'func_Persec': user_jogok.func_Persec,
+                                'func_Systems': user_jogok.func_Systems,
+                                'func_Hiring': user_jogok.func_Hiring,
+                                #
+                            }
+                            session['user_permissions'] = permissions
                         log_event(
                             userid=user.agentId,
                             event_type="LOGIN",
@@ -103,6 +143,7 @@ def main():
     return render_template('main.html')
 
 @app.route('/persec')
+@permission_required('func_Persec')
 @login_required
 def persec():
     log_event(

@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu" style="background-color: #121212;">
 <head>
-    <link rel="icon" href="{{ url_for('static', filename='img/magyar_cimer.png') }}" type="image/png">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <meta charset="UTF-8">
+    <meta name="color-scheme" content="dark">
+    <link rel="icon" href="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Bejelentkezés</title>
     <style>
+html {
+            background-color: #121212 !important;
+        }
         body {
+            background-color: #121212;
             background-image:
-                url('../static/img/niklogo.png'),
-                url('../static/img/dark_wallpaper.jpg');
+                url('/static/img/{{ config['APP_LOGO'] }}'),
+                url('/static/img/dark_wallpaper.jpg');
             background-repeat: no-repeat, no-repeat;
-            background-size: 400px auto, cover;
+            background-size: {{ config['APP_LOGOSIZE'] ~ "vmin" }} auto, cover;
             background-position: center 10%, center center;
             background-attachment: fixed;
+            height: 100vh;
             margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
         }
 
         .login-container {

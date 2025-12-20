@@ -22,11 +22,11 @@ def log_event(userid, event_type, description, table_name=None, record_id=None):
         db.session.add(new_log)
         db.session.commit()
 
-        print(f"Log mentve: {event_type} - {description}")
+        #print(f"Log mentve: {event_type} - {description}")
 
     except Exception as e:
         db.session.rollback()
-        print(f"HIBA a naplózás során: {e}")
+        #print(f"HIBA a naplózás során: {e}")
 
 
 def format_date(date):
