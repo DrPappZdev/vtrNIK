@@ -1,75 +1,242 @@
 {% extends "base.html" %}
 
-{% block title %}{{config['APP_SHORTNAME']}} - Szem. biz.{% endblock %}
+{% block title %}{{config['APP_SHORTNAME']}} - Személyi biztonság{% endblock %}
 
 {% block content %}
 
-    <nav class="navbar navbar-expand-lg navbar-light rounded mt-2 mx-2 border"
+    <style>
+        /* 1. FŐ KONTÉNER SZINKRONIZÁLÁSA */
+        main {
+            flex: 1;
+            overflow: hidden !important;
+            padding: 20px !important;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+        }
+
+        /* 2. EGYSÉGESÍTETT NAVBAR */
+        .navbar-unified {
+            height: 62px !important;
+            min-height: 62px !important;
+            max-height: 62px !important;
+            padding: 0 1rem !important;
+            display: flex !important;
+            align-items: center !important;
+            z-index: 1050;
+        }
+
+        .navbar-unified .container-fluid {
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .nav-center-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        /* 3. TÁBLÁZAT KONTÉNER ÉS STÍLUSOK */
+        .table-viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: rgba(10, 10, 10, 0.9);
+            border-radius: 8px;
+            border: 1px solid rgba(226, 178, 117, 0.2);
+            margin-top: 15px;
+        }
+
+        .table-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #e2b275 #1a1a1a;
+        }
+
+        .sticky-th {
+            position: sticky !important;
+            top: 0 !important;
+            background-color: #121212 !important;
+            color: #e2b275 !important;
+            z-index: 100;
+            border-bottom: 2px solid #e2b275 !important;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 15px 10px !important;
+        }
+
+        /* --- LEJÁRAT ÉS SOR SZÍNEZÉS --- */
+
+        /* 30 napon belül lejáró sor */
+        .row-expiring-soon td {
+            background-color: rgba(255, 50, 50, 0.08) !important;
+            box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.05);
+        }
+
+        /* Már lejárt sor */
+        .row-expired td {
+            background-color: rgba(255, 0, 0, 0.15) !important;
+        }
+
+        /* Dátum szöveg neon vörös */
+        .date-critical {
+            color: #ff4d4d !important;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+        }
+
+        /* Hover minden soron */
+        .agent-row:hover td {
+            background-color: rgba(226, 178, 117, 0.15) !important;
+        }
+
+        /* Webkit scrollbar */
+        .table-scroll-area::-webkit-scrollbar { width: 6px; height: 6px; }
+        .table-scroll-area::-webkit-scrollbar-thumb { background: #e2b275; border-radius: 10px; }
+    </style>
+
+    <nav class="navbar navbar-expand-lg navbar-light rounded mt-2 mx-2 border navbar-unified"
          style="background: linear-gradient(90deg, rgba(226, 178, 117, 0.1) 0%, rgba(226, 178, 117, 0.7) 50%, rgba(226, 178, 117, 0.1) 100%);
                 backdrop-filter: blur(10px);
                 border-color: rgba(226, 178, 117, 0.4) !important;
-                position: relative;
-                z-index: 1000;">
+                position: relative;">
         <div class="container-fluid position-relative">
-            <a class="navbar-brand" style="font-weight:bold; color:#e0e0e0;" href="/main">
+            <a class="navbar-brand d-flex align-items-center" style="font-weight:bold; color:#e0e0e0;" href="/main">
                 <img src="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" height="30" class="d-inline-block align-top ms-2" alt="">
-                Főmenü
+                <span class="badge" style="background-color: #e2b275; color: #000; margin-left: 5px; font-weight: bold;">
+                    {{ config['APP_SHORTORG'] }}-<span style="color: #d02b2b;">B</span><span style="color: #ffffff;">f</span><span style="color: #2b823a;">R</span>
+                </span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav position-absolute start-50 translate-middle-x d-flex flex-nowrap">
+
+            <div class="nav-center-container">
+                <ul class="navbar-nav d-flex flex-nowrap align-items-center gap-3">
                     <li class="nav-item">
-                        <a id="persec_kereses"
-                           class="nav-link"
-                           style="font-weight: bold; color: #e2b275 !important;"
-                           href="#"
-                           data-bs-toggle="modal"
-                           data-bs-target="#mdl_Search"
-                           data-bs-placement="bottom"
-                           data-bs-html="true"
-                           title="Keresés névre, vagy névtöredékre">
-                            <i class="bi bi-search me-1"></i> Keresés
+                        <a class="nav-link" style="font-weight: bold; color: #e2b275 !important;" href="#" data-bs-toggle="modal" data-bs-target="#mdl_Search">
+                            <i class="bi bi-search me-1"></i> KERESÉS
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" style="font-weight: bold; color: #000000;" href="#" id="persec_szures" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-placement="bottom" data-bs-html="true" data-bs-auto-close="true"><i class="bi bi-filter"></i> Szűrés</a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="z-index: 1000;">
-                            <a id="search_org" class="dropdown-item" href="#">Szervezeti elemre</a>
-                            <a id="search_clearence" class="dropdown-item" href="#">Lejáró személyi biztonsági tanúsítványokra (nemzeti)</a>
-                            <a id="search_number" class="dropdown-item" href="#">Keresés rekordazonosítóra</a>
-                            <a id="search_complex" class="dropdown-item disabled" href="#" disabled>Összetett szűkítés</a>
+                        <a class="nav-link dropdown-toggle" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-filter"></i> SZŰRÉS
+                        </a>
+                        <div class="dropdown-menu shadow-lg" style="background: #1a1a1a; border: 1px solid #e2b275;">
+                            <a class="dropdown-item text-white" href="#">Szervezeti elemre</a>
+                            <a class="dropdown-item text-white" href="#">Lejáró SzBT-re</a>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a id="persec_ujkollega" class="nav-link" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="SzBT-k és TtNy-ek"><i class="bi bi-person-plus-fill"></i> Új személy rögzítése</a>
-                    </li>
-                    <li class="nav-item">
-                        <a id="persec_archivum" class="nav-link" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="SzBT-k és TtNy-ek"><i class="bi bi-archive"></i> Archívum</a>
-                    </li>
-                </ul>
-
-                <ul class="navbar-nav ms-auto d-flex flex-nowrap">
-                    <li class="nav-item">
-                        <a class="nav-link" style="font-weight: bold; color: #BC0D0D;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" href="/logout">
-                            <i class="fas fa-power-off"></i> Kijelentkezés
-                        </a>
-                    </li>
-                    <li class="nav-item" style="list-style: none;">
-                        <a class="nav-link" data-bs-toggle="offcanvas" href="#offcanvasAdminMenu" role="button" style="padding: 5px 15px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#e2b275" class="bi bi-list" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
-                            </svg>
+                        <a class="nav-link" style="font-weight: bold; color: #000000;" href="#">
+                            <i class="bi bi-person-plus-fill"></i> ÚJ SZEMÉLY
                         </a>
                     </li>
                 </ul>
             </div>
+
+            <ul class="navbar-nav ms-auto d-flex flex-nowrap align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="/logout">
+                        <i class="bi bi-power fs-3"></i>
+                    </a>
+                </li>
+                {% if session.get('user_permissions') and session['user_permissions'].get('is_Admin') %}
+                <li class="nav-item ms-2">
+                    <a class="nav-link p-0" data-bs-toggle="offcanvas" href="#offcanvasAdminMenu">
+                        <svg width="32" height="32" fill="#e2b275" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+                        </svg>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
     </nav>
 
-    {% include 'persec_modals.html' %}
-    {% include 'adminmenu_modals.html' %}
-    {% include 'about_modals.html' %}
+    <div class="table-viewport shadow-lg">
+        <div class="table-scroll-area">
+            <table class="table table-dark table-hover mb-0 align-middle" style="border-collapse: separate; border-spacing: 0; width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="sticky-th text-end pe-2" style="width: 50px;"></th>
+                        <th class="sticky-th">Név</th>
+                        <th class="sticky-th">Rendfokozat</th>
+                        <th class="sticky-th">Beosztás</th>
+                        <th class="text-center sticky-th">Nemzeti</th>
+                        <th class="text-center sticky-th">NATO</th>
+                        <th class="text-center sticky-th">EU</th>
+                        <th class="text-center pe-4 sticky-th">Érvényesség</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in munkatarsak %}
+                    {# Logika kiszámítása #}
+                    {% set is_expired = m.Ervenyesseg and m.Ervenyesseg < today %}
+                    {% set is_critical = m.Ervenyesseg and m.Ervenyesseg <= limit_date and not is_expired %}
+
+                    <tr onclick="window.open('/persec/details/{{ m.id }}', '_blank')"
+                        class="agent-row {% if is_expired %}row-expired{% elif is_critical %}row-expiring-soon{% endif %}"
+                        style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                        <td class="text-end pe-2">
+                            <span style="color: #e2b275; font-size: 0.9rem;">{{ m.titulus if m.titulus else '' }}</span>
+                        </td>
+                        <td><span style="color: #e2b275; font-weight: bold;">{{ m.nev }}</span></td>
+                        <td>{{ m.rendfokozat }}</td>
+                        <td><small class="text-white-50">{{ m.beosztas }}</small></td>
+
+                        <td class="text-center">
+                            {% if m.Nemzeti_Minosites %}
+                                <span class="badge border"
+                                      style="min-width: 95px; border-color: #ffb300 !important; color: #ffb300 !important; background: rgba(255, 179, 0, 0.1); font-weight: bold; text-transform: uppercase; font-size: 0.75rem; box-shadow: 0 0 10px rgba(255, 179, 0, 0.4);">
+                                    {{ m.Nemzeti_Minosites }}
+                                </span>
+                            {% else %}<span class="text-muted">-</span>{% endif %}
+                        </td>
+
+                        <td class="text-center">
+                            {% if m.NATO_Minosites %}
+                                <span class="badge border"
+                                      style="min-width: 95px; border-color: #007bff !important; color: #00d4ff !important; background: rgba(0, 123, 255, 0.15); font-weight: bold; text-transform: uppercase; font-size: 0.75rem; box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);">
+                                    {{ m.NATO_Minosites }}
+                                </span>
+                            {% else %}<span class="text-muted">-</span>{% endif %}
+                        </td>
+
+                        <td class="text-center">
+                            {% if m.EU_Minosites %}
+                                <span class="badge border"
+                                      style="min-width: 95px; border-color: #2962ff !important; color: #7095ff !important; background: rgba(41, 98, 255, 0.2); font-weight: bold; text-transform: uppercase; font-size: 0.75rem; box-shadow: 0 0 15px rgba(41, 98, 255, 0.6); border-width: 2px !important;">
+                                    {{ m.EU_Minosites }}
+                                </span>
+                            {% else %}<span class="text-muted">-</span>{% endif %}
+                        </td>
+
+                        <td class="text-center pe-4 text-nowrap">
+                            {% if m.Ervenyesseg %}
+                                <span class="{% if is_expired %}text-danger fw-bold{% elif is_critical %}date-critical{% else %}text-white-50{% endif %}">
+                                    {{ m.Ervenyesseg.strftime('%Y.%m.%d.') }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted small">---</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% include 'persec_modals.html' %}
+{% include 'adminmenu_modals.html' %}
+{% include 'about_modals.html' %}
 
 {% endblock %}

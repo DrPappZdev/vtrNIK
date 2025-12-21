@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
-from models import db, Users, Agents, Rendfokozat, Beosztasok, Jogok
+from models import db, Users, Agents, Rendfokozat, Beosztasok, Jogok, AktivMunkatarsak
 from models import init_db
 #from config import SQLALCHEMY_DATABASE_URI
 from werkzeug.security import check_password_hash
@@ -83,16 +83,16 @@ def logincheck():
             if check_password_hash(user.agentNick, input_nick):
                 if check_password_hash(user.agentPassword, input_pass):
 
-                    # 1. Ügynök keresése (mivel mondtad, hogy az agentId helyett id van)
+                    #  kolléga kikeresése
                     agent_data = db.session.query(Agents).filter_by(id=user.agentId).first()
 
                     if agent_data and agent_data.valid_e:
 
-                        # 2. rang és beosztás kibányászása
+                        # rendfokozat és a beosztás kibányászása
                         rank_data = db.session.query(Rendfokozat).filter_by(id=agent_data.rendfokozat).first()
                         beo = db.session.query(Beosztasok).filter_by(id=agent_data.beosztas).first()
 
-                        # Biztonsági ellenőrzés, ha véletlenül nincs meg a kód a táblában
+                        # ha nem lenne meg
                         rank_name = rank_data.rendfokozat if rank_data else "Ismeretlen"
 
                         session['user_id'] = user.agentId
@@ -104,10 +104,14 @@ def logincheck():
                         user_jogok = Jogok.query.filter_by(agentId=user.agentId).first()
                         if user_jogok:
                             permissions = {
+                                'is_Admin': user_jogok.is_Admin,
                                 'func_Persec': user_jogok.func_Persec,
                                 'func_Systems': user_jogok.func_Systems,
                                 'func_Hiring': user_jogok.func_Hiring,
-                                #
+                                'func_UserHandling': user_jogok.func_UserHandling,
+                                'func_QueryCreator': user_jogok.func_QueryCreator,
+                                'func_AppSettings': user_jogok.func_AppSettings,
+                                'func_Logging': user_jogok.func_Logging
                             }
                             session['user_permissions'] = permissions
                         log_event(
@@ -142,10 +146,17 @@ def main():
     )
     return render_template('main.html')
 
+
+from datetime import date, datetime, timedelta  # Ne felejtsd el az importot a fájl elején!
+
+
 @app.route('/persec')
 @permission_required('func_Persec')
 @login_required
 def persec():
+    today = datetime.now().date()
+    limit_date = today + timedelta(days=30)
+    munkatarsak_adatai = AktivMunkatarsak.query.order_by(AktivMunkatarsak.nev.asc()).all()
     log_event(
         userid=session.get('user_id', '0'),
         event_type="PAGE_LOAD",
@@ -153,8 +164,13 @@ def persec():
         table_name="munkatarsak",
         record_id=0
     )
-    return render_template('szemelyibiztonsag.html')
 
+    return render_template(
+        'szemelyibiztonsag.html',
+        munkatarsak=munkatarsak_adatai,
+        today=date.today(),
+        limit_date=limit_date
+    )
 
 @app.route('/')
 def login():

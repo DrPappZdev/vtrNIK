@@ -6,16 +6,14 @@
         color: #e2b275;
         width: 350px;
 
-        /* LEBEGŐ ÉS TARTALOMHOZ IGAZODÓ MAGASSÁG */
-        top: 85px !important;       /* A Navbar alá pozicionálva */
-        right: 20px !important;     /* Távolság a jobb szélétől */
-        height: auto !important;    /* CSAK AKKORA LEGYEN, AMÍG A TARTALOM TART */
-        max-height: 85vh !important; /* De ne lógjon le a képernyőről, ha túl sok a menüpont */
+        top: 85px !important;
+        right: 20px !important;
+        height: auto !important;
+        max-height: 85vh !important;
 
         border-radius: 20px !important;
         box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
 
-        /* Bootstrap alaphelyzet felülírása a lebegéshez */
         bottom: auto !important;
         transition: transform 0.3s ease-in-out;
     ">
@@ -29,7 +27,7 @@
         <div class="mb-3">
             <h6 class="fw-bold small border-bottom pb-2" style="color: #ffffff; opacity: 0.7;">Funkciók</h6>
         </div>
-
+        {% if session.get('user_permissions') and session['user_permissions'].get('func_UserHandling') %}
         <div class="dropdown mb-2">
             <button class="btn btn-admin-dropdown dropdown-toggle w-100 text-start" type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-people-fill me-2"></i> Felhasználók
@@ -43,6 +41,8 @@
                 </li>
             </ul>
         </div>
+        {% endif %}
+        {% if session.get('user_permissions') and session['user_permissions'].get('func_QueryCreator') %}
         <div class="dropdown mb-2">
             <button class="btn btn-admin-dropdown dropdown-toggle w-100 text-start" type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-list-task"></i> Listák / Legyűjtések
@@ -53,18 +53,17 @@
                 <li><a class="dropdown-item text-warning" href="#"><i class="bi bi-list"></i> stb... </a></li>
             </ul>
         </div>
-
+        {% endif %}
         <hr style="border-color: rgba(226, 178, 117, 0.3); margin: 1rem 0;">
         <ul class="list-unstyled mb-0">
+            {% if session.get('user_permissions') and session['user_permissions'].get('func_AppSettings') %}
             <li class="mb-2"><a href="#" class="nav-link admin-link"><i class="bi bi-gear-fill"></i> {{ config['APP_SHORTNAME'] }} beállításai</a></li>
-            <li class="mb-2"><a href="#" class="nav-link admin-link"><i class="bi bi-building me-2"></i> Partnerek</a></li>
-            <li class="mb-2">
-                <a href="#" class="nav-link admin-link text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#dr_Delete">
-                    <i class="bi bi-trash3-fill me-2"></i> <span style="color:red">Törlés</span>
-                </a>
-            </li>
+            {% endif %}
+            {% if session.get('user_permissions') and session['user_permissions'].get('func_Logging') %}
+            <li class="mb-2"><a href="#" class="nav-link admin-link"><i class="bi bi-activity"></i> Loggolási bejegyzések</a></li>
+            {% endif %}
             <li>
-                <a href="#" class="nav-link admin-link" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                <a href="#" class="nav-link admin-link border-top pb-2" data-bs-toggle="modal" data-bs-target="#aboutModal">
                     <i class="bi bi-info-circle me-2"></i> Névjegy
                 </a>
             </li>
