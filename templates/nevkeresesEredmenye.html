@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Névkeresés eredménye: {{ query_string }}{% endblock %}
+
+{% block content %}
+
+    <style>
+        /* 1. FŐ KONTÉNER ÉS NAVBAR MARAD A JÓ ARÁNYOKKAL */
+        main {
+            flex: 1;
+            overflow: hidden !important;
+            padding: 20px !important;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+        }
+
+        .navbar-unified {
+            height: 62px !important;
+            min-height: 62px !important;
+            max-height: 62px !important;
+            padding: 0 1rem !important;
+            display: flex !important;
+            align-items: center !important;
+            z-index: 1050;
+        }
+
+        .nav-center-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .search-info-pill {
+            background: rgba(226, 178, 117, 0.15);
+            border: 1px solid rgba(226, 178, 117, 0.4);
+            color: #e2b275;
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* 2. TÁBLÁZAT KONTÉNER */
+        .table-viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: rgba(10, 10, 10, 0.9);
+            border-radius: 8px;
+            border: 1px solid rgba(226, 178, 117, 0.2);
+            margin-top: 15px;
+        }
+
+        .table-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        .sticky-th {
+            position: sticky !important;
+            top: 0 !important;
+            background-color: #121212 !important;
+            color: #e2b275 !important;
+            z-index: 100;
+            border-bottom: 2px solid #e2b275 !important;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 15px 10px !important;
+        }
+
+        /* 3. DINAMIKUS SOR ÉS DÁTUM SZÍNEZÉS (A JÓ KÓDBÓL) */
+
+        /* 30 napon belül lejáró vagy már lejárt sor háttér */
+        .row-expiring-soon td {
+            background-color: rgba(255, 50, 50, 0.08) !important;
+            box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.05);
+        }
+
+        .row-expired td {
+            background-color: rgba(255, 0, 0, 0.15) !important;
+        }
+
+        /* Kritikus dátum vörös izzása */
+        .date-critical {
+            color: #ff4d4d !important;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
+        }
+
+        /* BADGE GLOW EFFEKTEK */
+        .badge-glow {
+            min-width: 110px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+        .b-n { border-color: #ffb300 !important; color: #ffb300 !important; background: rgba(255, 179, 0, 0.1); box-shadow: 0 0 10px rgba(255, 179, 0, 0.4); }
+        .b-nato { border-color: #007bff !important; color: #00d4ff !important; background: rgba(0, 123, 255, 0.15); box-shadow: 0 0 12px rgba(0, 123, 255, 0.5); }
+        .b-eu { border-color: #2962ff !important; color: #7095ff !important; background: rgba(41, 98, 255, 0.2); box-shadow: 0 0 15px rgba(41, 98, 255, 0.6); border-width: 2px !important; }
+
+        .agent-row:hover td {
+            background-color: rgba(226, 178, 117, 0.2) !important;
+        }
+    </style>
+
+    <nav class="navbar navbar-expand-lg navbar-light rounded mt-2 mx-2 border navbar-unified"
+         style="background: linear-gradient(90deg, rgba(226, 178, 117, 0.1) 0%, rgba(226, 178, 117, 0.7) 50%, rgba(226, 178, 117, 0.1) 100%);
+                backdrop-filter: blur(10px); border-color: rgba(226, 178, 117, 0.4) !important; position: relative;">
+        <div class="container-fluid position-relative">
+            <a class="navbar-brand d-flex align-items-center" style="font-weight:bold; color:#e0e0e0;" href="/main">
+                <img src="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" height="30" class="ms-2">
+                <span class="badge" style="background-color: #e2b275; color: #000; margin-left: 5px; font-weight: bold;">
+                    {{ config['APP_SHORTORG'] }}-BfR
+                </span>
+            </a>
+            <div class="nav-center-container">
+                <div class="search-info-pill">
+                    <span>TALÁLATOK: <span style="color: #fff;">"{{ query_string }}"</span> | {{ munkatarsak|length }} fő</span>
+                </div>
+            </div>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" href="javascript:window.close();"><i class="bi bi-x-square fs-4"></i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="table-viewport shadow-lg">
+        <div class="table-scroll-area">
+            <table class="table table-dark table-hover mb-0 align-middle" style="border-collapse: separate; border-spacing: 0; width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="sticky-th text-end pe-2" style="width: 50px;"></th>
+                        <th class="sticky-th">Név</th>
+                        <th class="sticky-th">Rendfokozat</th>
+                        <th class="sticky-th">Beosztás</th>
+                        <th class="text-center sticky-th">Nemzeti</th>
+                        <th class="text-center sticky-th">NATO</th>
+                        <th class="text-center sticky-th">EU</th>
+                        <th class="text-center pe-4 sticky-th">Érvényesség</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in munkatarsak %}
+                        {# ADATOK ÉS DÁTUM LOGIKA #}
+                        {% set n_text = minszint.get(nemzeti_map.get(m.id)|string) %}
+                        {% set nato_text = minszint.get(nato_map.get(m.id)|string) %}
+                        {% set eu_text = minszint.get(eu_map.get(m.id)|string) %}
+                        {% set lejarat = lejarati_map.get(m.id) %}
+
+                        {# Kritikus határidő kiszámítása (30 napos limit_date használatával) #}
+                        {% set is_expired = lejarat and lejarat < today %}
+                        {% set is_critical = lejarat and lejarat <= limit_date and not is_expired %}
+
+                        <tr onclick="window.open('/persec/details/{{ m.id }}', '_blank')"
+                            class="agent-row {% if is_expired %}row-expired{% elif is_critical %}row-expiring-soon{% endif %}"
+                            style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                            <td class="text-end pe-2">
+                                <span style="color: #e2b275; font-size: 0.9rem;">{{ m.titulus if m.titulus else '' }}</span>
+                            </td>
+                            <td><span style="color: #e2b275; font-weight: bold;">{{ m.nev }}</span></td>
+                            <td>{{ ranks.get(m.rendfokozat, '-') }}</td>
+                            <td><small class="text-white-50">{{ positions.get(m.beosztas, '-') }}</small></td>
+
+                            <td class="text-center">
+                                {% if n_text %}
+                                    <span class="badge border badge-glow b-n">{{ n_text }}</span>
+                                {% else %}<span class="text-muted">-</span>{% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                {% if nato_text %}
+                                    <span class="badge border badge-glow b-nato">{{ nato_text }}</span>
+                                {% else %}<span class="text-muted">-</span>{% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                {% if eu_text %}
+                                    <span class="badge border badge-glow b-eu">{{ eu_text }}</span>
+                                {% else %}<span class="text-muted">-</span>{% endif %}
+                            </td>
+
+                            <td class="text-center pe-4 text-nowrap">
+                                {% if lejarat %}
+                                    <span class="{% if is_expired %}text-danger fw-bold{% elif is_critical %}date-critical{% else %}text-white-50{% endif %}">
+                                        {{ lejarat.strftime('%Y.%m.%d.') }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted small">---</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% include 'adminmenu_modals.html' %}
+    {% include 'about_modals.html' %}
+
+{% endblock %}

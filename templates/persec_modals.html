@@ -40,6 +40,63 @@
     </div>
 </div>
 
+<div class="modal fade" id="mdl_AddNewPerson" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #121212; border: 1px solid #e2b275; color: #e0e0e0;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(226, 178, 117, 0.3);">
+                <h5 class="modal-title" style="color: #e2b275;"><i class="bi bi-person-plus-fill me-2"></i>Új munkatárs rögzítése</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/persec/add_person" method="POST">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label small text-uppercase" style="color: #e2b275;">Titulus</label>
+                            <input type="text" name="titulus" class="form-control bg-dark text-white border-secondary" placeholder="pl. Dr.">
+                        </div>
+                        <div class="col-md-10">
+                            <label class="form-label small text-uppercase" style="color: #e2b275;">Teljes név</label>
+                            <input type="text" name="nev" class="form-control bg-dark text-white border-secondary" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-uppercase" style="color: #e2b275;">Rendfokozat</label>
+                            <select name="rendfokozat_id" class="form-select bg-dark text-white border-secondary" required>
+                                <option value="" selected disabled>Válasszon...</option>
+                                {% for r in rendfokozatok %}
+                                <option value="{{ r.id }}">{{ r.rendfokozat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small text-uppercase" style="color: #e2b275;">Beosztás</label>
+                            <select name="beosztas_id" class="form-select bg-dark text-white border-secondary" required>
+                                <option value="" selected disabled>Válasszon...</option>
+                                {% for b in beosztasok %}
+                                    <option value="{{ b.id }}">{{ b.beosztas }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <hr style="border-color: rgba(226, 178, 117, 0.2);">
+                            <p class="small text-muted italic text-center">A mentés után a személy adatai azonnal megjelennek a listában.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid rgba(226, 178, 117, 0.3);">
+                    <button type="button" class="btn btn-outline-secondary text-white" data-bs-dismiss="modal">Mégse</button>
+                    <button type="submit" class="btn" style="background-color: #e2b275; color: #000; font-weight: bold;">
+                        <i class="bi bi-save me-1"></i> Mentés az adatbázisba
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <style>
 .custom-radio {
     border-color: #e2b275 !important;

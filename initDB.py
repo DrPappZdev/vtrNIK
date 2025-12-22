@@ -7,9 +7,9 @@ from datetime import datetime, timezone
 
 # A teszt felhasználó adatok
 users_to_seed = [
-    #(1, "PappZ", "PappZTitok"),
-    (2, "IllesD", "IllesDTitok"),
-    #(3, "TesztE", "TesztETitok")
+    (6, "Jurkovics", "JurkovicsTitok"),
+    (7, "Konczer", "KonczerTitok"),
+    (22, "Meszaros", "MeszarosTitok")
 ]
 
 

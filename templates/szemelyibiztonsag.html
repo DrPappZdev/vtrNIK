@@ -134,7 +134,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" style="font-weight: bold; color: #000000;" href="#">
+                        <a class="nav-link" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="modal" data-bs-target="#mdl_AddNewPerson">
                             <i class="bi bi-person-plus-fill"></i> ÚJ SZEMÉLY
                         </a>
                     </li>
@@ -235,8 +235,49 @@
         </div>
     </div>
 
-{% include 'persec_modals.html' %}
-{% include 'adminmenu_modals.html' %}
-{% include 'about_modals.html' %}
+    {% include 'persec_modals.html' %}
+    {% include 'adminmenu_modals.html' %}
+    {% include 'about_modals.html' %}
+
+    <script>
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            // 1. Név kiolvasása
+            const searchName = document.getElementById('requesterData').value.trim();
+
+            if (searchName === "") {
+                document.getElementById('requesterData').focus();
+                return;
+            }
+
+            // 2. A kiválasztott státusz (Radio Button) kiolvasása
+            let status = "all"; // alapértelmezett
+            if (document.getElementById('btnradio_Aktiv').checked) {
+                status = "active";
+            } else if (document.getElementById('btnradio_Inaktiv').checked) {
+                status = "inactive";
+            } else if (document.getElementById('btnradio_All').checked) {
+                status = "all";
+            }
+
+            // 3. Eredmény megnyitása ÚJ fülön két paraméterrel
+            // Példa URL: /resultNameSearch?query=Kovacs&status=active
+            const targetUrl = "/resultNameSearch?query=" + encodeURIComponent(searchName) + "&status=" + status;
+            window.open(targetUrl, '_blank');
+
+            // 4. Modal bezárása
+            const searchModalEl = document.getElementById('mdl_Search');
+            const modalInstance = bootstrap.Modal.getInstance(searchModalEl);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        });
+
+        // Enter billentyű támogatása
+        document.getElementById('requesterData').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+    </script>
 
 {% endblock %}

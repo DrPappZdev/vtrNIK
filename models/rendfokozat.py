@@ -8,4 +8,4 @@ class Rendfokozat(db.Model):
     aktiv_e = db.Column(db.Boolean, nullable=False)
 
 def __init__(self, **kwargs):
-    super(Rendfokozatok, self).__init__(**kwargs)
+    super(Rendfokozat, self).__init__(**kwargs)

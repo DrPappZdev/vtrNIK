@@ -1,28 +1,20 @@
 # app.py
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
-from models import db, Users, Agents, Rendfokozat, Beosztasok, Jogok, AktivMunkatarsak
+from models import db, Users, Munkatarsak, Rendfokozat, Beosztasok, Jogok, AktivMunkatarsak
+from models import MinositesiSzint, NemzetiSzbt, NatoSzbt, EuSzbt
 from models import init_db
-#from config import SQLALCHEMY_DATABASE_URI
 from werkzeug.security import check_password_hash
 from config import Config
 from utility import log_event
+
+from sqlalchemy import or_
 
 app = Flask(__name__)
 
 app.config.from_object(Config)
 
 init_db(app)
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash('A kért oldal eléréséhez be kell jelentkezned!')
-            # Itt adjuk hozzá a 'next' paramétert!
-            return redirect(url_for('login', next=request.path))
-        return f(*args, **kwargs)
-    return decorated_function
 
 def login_required(f):
     @wraps(f)
@@ -56,6 +48,109 @@ def permission_required(function_column):
         return decorated_function
     return decorator
 
+
+@app.route('/persec/add_person', methods=['POST'])
+@permission_required('func_Persec')
+@login_required
+def add_person():
+    try:
+        # Adatok kinyerése az űrlapról
+        print("Id: ", request.form.get('rendfokozat_id'), " " , request.form.get('beosztas_id'))
+        uj_munkatars = Munkatarsak(
+            titulus=request.form.get('titulus'),
+            nev=request.form.get('nev'),
+
+            rendfokozat=request.form.get('rendfokozat_id'),
+            beosztas=request.form.get('beosztas_id'),
+            valid_e="0"
+        )
+
+        db.session.add(uj_munkatars)
+        db.session.commit()
+
+        log_event(
+            userid=session.get('user_id', '0'),
+            event_type="INSERT",
+            description=f"Új munkatárs rögzítve: {uj_munkatars.nev}",
+            table_name="munkatarsak",
+            record_id=uj_munkatars.id
+        )
+
+        flash(f"{uj_munkatars.nev} sikeresen rögzítve!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Hiba történt a mentés során: {str(e)}", "danger")
+
+    return redirect(url_for('persec'))
+
+
+
+
+
+@app.route('/resultNameSearch')
+def result_name_search():
+    query_string = request.args.get('query', '').strip()
+    status = request.args.get('status', 'all')
+
+    # 1. Alap szűrés a nevekre
+    search_filter = or_(
+        Munkatarsak.nev.ilike(f'%{query_string}%'),
+        Munkatarsak.szuletesiNev.ilike(f'%{query_string}%')
+    )
+    stmt = Munkatarsak.query.filter(search_filter)
+
+    if status == "active":
+        stmt = stmt.filter(Munkatarsak.valid_e == 1)
+    elif status == "inactive":
+        stmt = stmt.filter(Munkatarsak.valid_e == 0)
+
+    munkatarsak_lista = stmt.all()
+    m_ids = [m.id for m in munkatarsak_lista]
+
+    # 2. Nemzeti SZBT adatok lekérése a megtalált munkatársakhoz
+    # Csak azokat kérjük le, amik nincsenek visszavonva (nincs visszavonó dátum)
+    nemzeti_adatok = NemzetiSzbt.query.filter(
+        NemzetiSzbt.agentId.in_(m_ids),
+        NemzetiSzbt.szbtNemVisszavonDatum == None
+    ).all()
+
+    # Szótár építése: { munkatars_id: minosites_szint_id }
+    nemzeti_map = {n.agentId: n.szbtNemMinSzint for n in nemzeti_adatok}
+
+    # --- NATO ADATOK ---
+    nato_adatok = NatoSzbt.query.filter(NatoSzbt.agentId.in_(m_ids), NatoSzbt.szbtNatoVisszavonDatum == None).all()
+    nato_map = {n.agentId: n.szbtNatoMinSzint for n in nato_adatok}
+
+    # --- EU ADATOK ---
+    eu_adatok = EuSzbt.query.filter(EuSzbt.agentId.in_(m_ids), EuSzbt.szbtEuVisszavonDatum == None).all()
+    eu_map = {e.agentId: e.szbtEuMinSzint for e in eu_adatok}
+
+
+    # Érvényességi dátumok térképe (a táblázat utolsó oszlopához)
+    lejarati_map = {n.agentId: n.szbtNemLejaratiDatum for n in nemzeti_adatok}
+
+    # 3. Segédszótárak (Rendfokozat, Beosztás, Szintek)
+    ranks = {r.id: r.rendfokozat for r in Rendfokozat.query.all()}
+    positions = {b.id: b.beosztas for b in Beosztasok.query.all()}
+    secretLevel = {str(l.id): l.minSzint for l in MinositesiSzint.query.all()}
+
+    today = datetime.now().date()
+    limit_date = today + timedelta(days=30)
+
+    return render_template('nevkeresesEredmenye.html',
+                           munkatarsak=munkatarsak_lista,
+                           query_string=query_string,
+                           status=status,
+                           ranks=ranks,
+                           positions=positions,
+                           minszint=secretLevel,
+                           nemzeti_map=nemzeti_map,
+                           nato_map=nato_map,  # ÚJ
+                           eu_map=eu_map,
+                           lejarati_map=lejarati_map,  # ÚJ!
+                           today=today,
+                           limit_date=limit_date)
+
 @app.route('/logincheck', methods=['GET', 'POST'])
 def logincheck():
     if request.method == 'POST':
@@ -84,7 +179,7 @@ def logincheck():
                 if check_password_hash(user.agentPassword, input_pass):
 
                     #  kolléga kikeresése
-                    agent_data = db.session.query(Agents).filter_by(id=user.agentId).first()
+                    agent_data = db.session.query(Munkatarsak).filter_by(id=user.agentId).first()
 
                     if agent_data and agent_data.valid_e:
 
@@ -146,9 +241,7 @@ def main():
     )
     return render_template('main.html')
 
-
 from datetime import date, datetime, timedelta  # Ne felejtsd el az importot a fájl elején!
-
 
 @app.route('/persec')
 @permission_required('func_Persec')
@@ -157,6 +250,10 @@ def persec():
     today = datetime.now().date()
     limit_date = today + timedelta(days=30)
     munkatarsak_adatai = AktivMunkatarsak.query.order_by(AktivMunkatarsak.nev.asc()).all()
+
+    rendfokozatok = Rendfokozat.query.order_by(Rendfokozat.rendfokozat).all()
+    beosztasok = Beosztasok.query.order_by(Beosztasok.beosztas).all()
+
     log_event(
         userid=session.get('user_id', '0'),
         event_type="PAGE_LOAD",
@@ -168,6 +265,8 @@ def persec():
     return render_template(
         'szemelyibiztonsag.html',
         munkatarsak=munkatarsak_adatai,
+        rendfokozatok=rendfokozatok,
+        beosztasok=beosztasok,
         today=date.today(),
         limit_date=limit_date
     )
