@@ -1,16 +1,15 @@
 <div class="modal fade" id="mdl_Search" tabindex="-1" aria-labelledby="mdl_SearchLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;"> <div class="modal-content" style="background-color: #121212 !important; border: 2px solid #e2b275 !important; border-radius: 12px; color: #e2b275 !important; box-shadow: 0 0 25px rgba(0,0,0,0.8);">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content" style="background-color: #121212 !important; border: 2px solid #e2b275 !important; border-radius: 12px; color: #e2b275 !important; box-shadow: 0 0 25px rgba(0,0,0,0.8);">
 
             <div class="modal-header py-2" style="border-bottom: 1px solid rgba(226, 178, 117, 0.2);">
-                <h5 class="modal-title fw-bold" id="mdl_SearchLabel" style="color: #e2b275 !important; font-size: 1rem;">Gyorskeresés</h5>
+                <h5 class="modal-title fw-bold" id="mdl_SearchLabel" style="color: #e2b275 !important; font-size: 1rem;"><i class="bi bi-search me-1"></i> Gyorskeresés</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) sepia(1) saturate(5); transform: scale(0.8);"></button>
             </div>
 
             <div class="modal-body py-2" style="background: transparent !important;">
                 <input type="hidden" id="amitKeresunk" value="0">
-
                 <label for="requesterData" class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8); font-size: 0.75rem;">Keresés névre, vagy névtöredékre:</label>
-
                 <input type="text" class="form-control fw-bold form-control-sm" id="requesterData" placeholder="Írd be a nevet..."
                        style="background-color: #222 !important; border: 1px solid #e2b275 !important; color: #ffffff !important; padding: 8px;">
             </div>
@@ -27,68 +26,112 @@
                     <label class="btn btn-outline-warning custom-radio py-1" for="btnradio_All">Mind</label>
                 </div>
             </div>
+            <div class="modal-footer py-2 d-flex justify-content-between align-items-center" style="border-top: 1px solid rgba(226, 178, 117, 0.2);">
 
-            <div class="modal-footer py-2" style="border-top: 1px solid rgba(226, 178, 117, 0.2);">
-                <button type="button" class="btn btn-sm" data-bs-dismiss="modal" style="background-color: #333; border: 1px solid #555; color: #fff;">
-                    Mégse
-                </button>
-                <button type="button" class="btn btn-sm" id="searchBtn" style="background-color: #e2b275 !important; border: none; color: #000; font-weight: bold; padding-left: 20px; padding-right: 20px;">
-                    <i class="bi bi-search"></i> Keresés
-                </button>
+                <div class="d-flex align-items-center ms-2">
+                    <label class="small fw-bold me-2" for="langSensitivity" style="color: #e2b275; font-size: 0.7rem; cursor: pointer; margin-bottom: 0;">
+                        Nyelvérzékenység
+                    </label>
+                    <div class="form-check form-switch p-0 m-0" style="min-height: auto;">
+                        <input class="form-check-input custom-switch shadow-none m-0" type="checkbox" id="langSensitivity" checked
+                               style="cursor: pointer; width: 2.5em; height: 1.25em; float: none;">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" class="btn btn-sm" data-bs-dismiss="modal" style="background-color: #333; border: 1px solid #555; color: #fff;">
+                        Mégse
+                    </button>
+                    <button type="button" class="btn btn-sm" id="searchBtn"
+                            onclick="executeSearch()"
+                            style="background-color: #e2b275 !important; border: none; color: #000; font-weight: bold; padding-left: 20px; padding-right: 20px;">
+                        <i class="bi bi-search"></i> Keresés
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="mdl_AddNewPerson" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" style="background-color: #121212; border: 1px solid #e2b275; color: #e0e0e0;">
-            <div class="modal-header" style="border-bottom: 1px solid rgba(226, 178, 117, 0.3);">
-                <h5 class="modal-title" style="color: #e2b275;"><i class="bi bi-person-plus-fill me-2"></i>Új munkatárs rögzítése</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-content-custom">
+            <div class="modal-header py-2">
+                <h5 class="modal-title fw-bold" style="color: #e2b275; font-size: 1.1rem;">
+                    <i class="bi bi-person-plus-fill me-2"></i> Új munkatárs rögzítése
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+                        style="filter: invert(1) sepia(1) saturate(5); transform: scale(0.8);"></button>
             </div>
-            <form action="/persec/add_person" method="POST">
-                <div class="modal-body">
+
+            <form action="/persec/add_person" method="POST" autocomplete="off">
+                <div class="modal-body py-3">
+                    <input type="hidden" name="valid_e" value="1">
+
                     <div class="row g-3">
                         <div class="col-md-2">
-                            <label class="form-label small text-uppercase" style="color: #e2b275;">Titulus</label>
-                            <input type="text" name="titulus" class="form-control bg-dark text-white border-secondary" placeholder="pl. Dr.">
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Titulus:</label>
+                            <input type="text" name="titulus" class="form-control form-control-sm" placeholder="pl. Dr.">
                         </div>
-                        <div class="col-md-10">
-                            <label class="form-label small text-uppercase" style="color: #e2b275;">Teljes név</label>
-                            <input type="text" name="nev" class="form-control bg-dark text-white border-secondary" required>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Jelenlegi név:</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="input_nev" name="nev" class="form-control" required>
+                                <button class="btn btn-outline-warning" type="button" onclick="copyName()" title="Másolás születési névhez">
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Születési név:</label>
+                            <input type="text" id="input_szuletesiNev" name="szuletesiNev" class="form-control form-control-sm" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Születési hely:</label>
+                            <input type="text" name="szuletesiHely" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Születési idő:</label>
+                            <input type="date" name="szuletesiIdo" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Anyja neve:</label>
+                            <input type="text" name="anyjaNeve" class="form-control form-control-sm" required>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label small text-uppercase" style="color: #e2b275;">Rendfokozat</label>
-                            <select name="rendfokozat_id" class="form-select bg-dark text-white border-secondary" required>
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Rendfokozat:</label>
+                            <select name="rendfokozat" class="form-select form-select-sm" required>
                                 <option value="" selected disabled>Válasszon...</option>
                                 {% for r in rendfokozatok %}
                                 <option value="{{ r.id }}">{{ r.rendfokozat }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
                         <div class="col-md-6">
-                            <label class="form-label small text-uppercase" style="color: #e2b275;">Beosztás</label>
-                            <select name="beosztas_id" class="form-select bg-dark text-white border-secondary" required>
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Beosztás</label>
+                            <select name="beosztas" class="form-select form-select-sm" required>
                                 <option value="" selected disabled>Válasszon...</option>
                                 {% for b in beosztasok %}
-                                    <option value="{{ b.id }}">{{ b.beosztas }}</option>
+                                <option value="{{ b.id }}">{{ b.beosztas }}</option>
                                 {% endfor %}
                             </select>
                         </div>
 
-                        <div class="col-12 mt-4">
-                            <hr style="border-color: rgba(226, 178, 117, 0.2);">
-                            <p class="small text-muted italic text-center">A mentés után a személy adatai azonnal megjelennek a listában.</p>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold mb-1" style="color: rgba(226, 178, 117, 0.8);">Megjegyzés:</label>
+                            <textarea name="memo" class="form-control" rows="2" style="font-size: 0.85rem;"></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer" style="border-top: 1px solid rgba(226, 178, 117, 0.3);">
-                    <button type="button" class="btn btn-outline-secondary text-white" data-bs-dismiss="modal">Mégse</button>
-                    <button type="submit" class="btn" style="background-color: #e2b275; color: #000; font-weight: bold;">
-                        <i class="bi bi-save me-1"></i> Mentés az adatbázisba
+
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm" data-bs-dismiss="modal" style="background-color: #333; border: 1px solid #555; color: #fff;">
+                        Mégse
+                    </button>
+                    <button type="submit" class="btn btn-sm" style="background-color: #e2b275 !important; border: none; color: #000; font-weight: bold; padding-left: 20px; padding-right: 20px;">
+                        <i class="bi bi-save"></i> Mentés az adatbázisba
                     </button>
                 </div>
             </form>
@@ -96,18 +139,71 @@
     </div>
 </div>
 
-
 <style>
-.custom-radio {
-    border-color: #e2b275 !important;
-    color: #e2b275 !important;
-    font-size: 0.75rem !important; /* Kisebb betűk a gombokon */
-    font-weight: bold !important;
-}
+    .custom-radio {
+        border-color: #e2b275 !important;
+        color: #e2b275 !important;
+        font-size: 0.75rem !important; /* Kisebb betűk a gombokon */
+        font-weight: bold !important;
+    }
 
-.btn-check:checked + .custom-radio {
-    background-color: rgba(226, 178, 117, 0.2) !important;
-    color: #ffffff !important;
-    border-color: #e2b275 !important;
-}
+    .btn-check:checked + .custom-radio {
+        background-color: rgba(226, 178, 117, 0.2) !important;
+        color: #ffffff !important;
+        border-color: #e2b275 !important;
+    }
+
+    /* Egységes modal stílusok */
+    .modal-content-custom {
+        background-color: #121212 !important;
+        border: 2px solid #e2b275 !important; /* Vastagabb arany keret */
+        border-radius: 12px !important;       /* Lekerekített sarkok */
+        color: #e2b275 !important;
+        box-shadow: 0 0 25px rgba(0,0,0,0.8); /* Erős árnyék */
+    }
+
+    .modal-backdrop.show {
+        opacity: 0.7 !important; /* Sötétebb háttér aktiváláskor */
+    }
+
+    /* Egyedi input stílusok a modalon belül */
+    .modal-content-custom .form-control,
+    .modal-content-custom .form-select {
+        background-color: #222 !important;
+        border: 1px solid rgba(226, 178, 117, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .modal-content-custom .form-control:focus,
+    .modal-content-custom .form-select:focus {
+        border-color: #e2b275 !important;
+        box-shadow: 0 0 8px rgba(226, 178, 117, 0.3);
+    }
+
+    .modal-content-custom .modal-header {
+        border-bottom: 1px solid rgba(226, 178, 117, 0.2) !important;
+    }
+
+    .modal-content-custom .modal-footer {
+        border-top: 1px solid rgba(226, 178, 117, 0.2) !important;
+    }
+
+        /* Arany színű Switch (kapcsoló) */
+    .custom-switch {
+        background-color: #333 !important;
+        border-color: #e2b275 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(226, 178, 117, 0.5)'/%3e%3c/svg%3e") !important;
+    }
+
+    .custom-switch:checked {
+        background-color: #e2b275 !important;
+        border-color: #e2b275 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='black'/%3e%3c/svg%3e") !important;
+    }
+
+    .custom-switch:focus {
+        border-color: #e2b275 !important;
+        box-shadow: 0 0 8px rgba(226, 178, 117, 0.4) !important;
+    }
+
 </style>

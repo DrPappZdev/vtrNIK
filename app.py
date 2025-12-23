@@ -1,4 +1,6 @@
 # app.py
+from pydoc import text
+
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
 from models import db, Users, Munkatarsak, Rendfokozat, Beosztasok, Jogok, AktivMunkatarsak
@@ -7,7 +9,7 @@ from models import init_db
 from werkzeug.security import check_password_hash
 from config import Config
 from utility import log_event
-
+from datetime import datetime
 from sqlalchemy import or_
 
 app = Flask(__name__)
@@ -48,55 +50,60 @@ def permission_required(function_column):
         return decorated_function
     return decorator
 
-
 @app.route('/persec/add_person', methods=['POST'])
 @permission_required('func_Persec')
 @login_required
 def add_person():
     try:
-        # Adatok kinyerése az űrlapról
-        print("Id: ", request.form.get('rendfokozat_id'), " " , request.form.get('beosztas_id'))
+        # Dátum konvertálása HTML-ből  (YYYY-MM-DD) Python date-re
+        szul_datum_str = request.form.get('szuletesiIdo')
+        szul_datum = datetime.strptime(szul_datum_str, '%Y-%m-%d').date() if szul_datum_str else None
+
         uj_munkatars = Munkatarsak(
+            valid_e=True,
             titulus=request.form.get('titulus'),
             nev=request.form.get('nev'),
-
-            rendfokozat=request.form.get('rendfokozat_id'),
-            beosztas=request.form.get('beosztas_id'),
-            valid_e="0"
+            szuletesiNev=request.form.get('szuletesiNev'),
+            szuletesiHely=request.form.get('szuletesiHely'),
+            szuletesiIdo=szul_datum,
+            anyjaNeve=request.form.get('anyjaNeve'),
+            rendfokozat=int(request.form.get('rendfokozat')),
+            beosztas=int(request.form.get('beosztas')),
+            memo=request.form.get('memo'),
+            szervezetiElem=None
         )
 
         db.session.add(uj_munkatars)
         db.session.commit()
 
-        log_event(
-            userid=session.get('user_id', '0'),
-            event_type="INSERT",
-            description=f"Új munkatárs rögzítve: {uj_munkatars.nev}",
-            table_name="munkatarsak",
-            record_id=uj_munkatars.id
-        )
-
         flash(f"{uj_munkatars.nev} sikeresen rögzítve!", "success")
     except Exception as e:
         db.session.rollback()
+        print(f"DEBUG HIBA: {str(e)}")
         flash(f"Hiba történt a mentés során: {str(e)}", "danger")
 
     return redirect(url_for('persec'))
 
-
-
-
-
 @app.route('/resultNameSearch')
+@permission_required('func_Persec')
+@login_required
 def result_name_search():
+
     query_string = request.args.get('query', '').strip()
     status = request.args.get('status', 'all')
+    strict = request.args.get('strict', 'true') == 'true'
 
-    # 1. Alap szűrés a nevekre
-    search_filter = or_(
-        Munkatarsak.nev.ilike(f'%{query_string}%'),
-        Munkatarsak.szuletesiNev.ilike(f'%{query_string}%')
-    )
+    # Nyelvérzékenység kapcsolása
+    if strict:
+        search_filter = or_(
+            Munkatarsak.nev.ilike(f'%{query_string}%'),
+            Munkatarsak.szuletesiNev.ilike(f'%{query_string}%')
+        )
+    else:
+        search_filter = or_(
+            Munkatarsak.nev.collate('Latin1_General_CI_AI').ilike(f'%{query_string}%'),
+            Munkatarsak.szuletesiNev.collate('Latin1_General_CI_AI').ilike(f'%{query_string}%')
+        )
     stmt = Munkatarsak.query.filter(search_filter)
 
     if status == "active":
