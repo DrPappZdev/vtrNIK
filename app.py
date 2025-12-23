@@ -77,6 +77,7 @@ def add_person():
         db.session.commit()
 
         flash(f"{uj_munkatars.nev} sikeresen rögzítve!", "success")
+
     except Exception as e:
         db.session.rollback()
         print(f"DEBUG HIBA: {str(e)}")

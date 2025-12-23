@@ -1,25 +1,86 @@
+/* --- 1. RENDSZER VISSZAJELZÉS (FLASH MODAL) --- */
+#systemFeedbackModal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 1000000 !important;
 
-<style>
+    /* ÁTTETSZŐBB FADE: 0.8 helyett 0.5 vagy 0.4 */
+    background-color: rgba(0, 0, 0, 0.4) !important;
 
+    /* ERŐSEBB BLUR: elegánsabbá teszi az áttetsző hátteret */
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
 
-    .flash-messages {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999;
-        width: 300px;
-    }
-    .alert {
-        background: #e2b275; /* A te színed */
-        color: black;
-        padding: 10px;
-        margin: 5px;
-        border-radius: 5px;
-        border: 1px solid black;
-    }
-</style>
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: row !important;
 
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out !important; /* Kicsit lágyabb áttűnés */
+    pointer-events: none;
+}
+
+#systemFeedbackModal.show {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto;
+}
+
+/* Az üzenet kártya box */
+.feedback-card {
+    background: #121212 !important;
+    border: 2px solid #e2b275 !important;
+    border-radius: 20px !important;
+    padding: 40px !important;
+    width: 380px !important;
+    max-width: 90% !important;
+    text-align: center !important;
+    box-shadow: 0 0 50px rgba(0,0,0,1) !important;
+    flex-shrink: 0 !important; /* Ne engedje a body-flexnek összenyomni */
+    
+    /* Beugró animáció */
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#systemFeedbackModal.show .feedback-card {
+    transform: scale(1);
+}
+
+.feedback-text {
+    color: #e2b275 !important;
+    font-size: 1.3rem !important;
+    font-weight: 500 !important;
+    margin-bottom: 25px !important;
+    line-height: 1.4;
+}
+
+/* A REND BEN GOMB (hogy ne a gyári Bootstrap legyen) */
+.feedback-btn {
+    background: transparent !important;
+    border: 1px solid #e2b275 !important;
+    color: #e2b275 !important;
+    padding: 10px 35px !important;
+    border-radius: 50px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.feedback-btn:hover {
+    background: #e2b275 !important;
+    color: #000 !important;
+}
+
+/* --- 2. FOOTER FORMÁZÁSA --- */
 footer {
     position: absolute;
     bottom: 0;
@@ -39,11 +100,11 @@ footer a {
 }
 
 footer a img {
-    margin-right: 5px;
+    margin-right: 8px;
 }
 
 footer a span {
-    font-size: 0.5em;
+    font-size: 0.9em; /* Kicsit növelve az olvashatóságért */
 }
 
 .footer-link span {

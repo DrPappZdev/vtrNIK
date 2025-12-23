@@ -95,7 +95,26 @@ function executeSearch() {
     const modalInstance = bootstrap.Modal.getInstance(modalEl);
     if (modalInstance) modalInstance.hide();
 }
+/*Flash eleje*/
+function closeFeedback() {
+    const modal = document.getElementById("systemFeedbackModal");
+    if (modal) {
+        modal.classList.remove("show");
+        // Megvárjuk az animációt, mielőtt eltüntetjük
+        setTimeout(() => {
+            modal.style.display = "none";
+        }, 300);
+    }
+}
 
+// Ha a háttérre kattint, akkor is záródjon be
+window.addEventListener("click", function(event) {
+    const modal = document.getElementById("systemFeedbackModal");
+    if (event.target === modal) {
+        closeFeedback();
+    }
+});
+/*Flash vége*/
 /**
  * Név másolása Jelenlegi név -> Születési név
  * Meghívva: onclick="copyName()"
