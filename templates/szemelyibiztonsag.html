@@ -5,7 +5,6 @@
 {% block content %}
 
     <style>
-        /* 1. FŐ KONTÉNER SZINKRONIZÁLÁSA */
         main {
             flex: 1;
             overflow: hidden !important;
@@ -15,7 +14,6 @@
             height: calc(100vh - 80px);
         }
 
-        /* 2. EGYSÉGESÍTETT NAVBAR */
         .navbar-unified {
             height: 62px !important;
             min-height: 62px !important;
@@ -41,7 +39,6 @@
             white-space: nowrap;
         }
 
-        /* 3. TÁBLÁZAT KONTÉNER ÉS STÍLUSOK */
         .table-viewport {
             flex: 1;
             display: flex;
@@ -74,8 +71,6 @@
             padding: 15px 10px !important;
         }
 
-        /* --- LEJÁRAT ÉS SOR SZÍNEZÉS --- */
-
         /* 30 napon belül lejáró sor */
         .row-expiring-soon td {
             background-color: rgba(255, 50, 50, 0.08) !important;
@@ -102,6 +97,24 @@
         /* Webkit scrollbar */
         .table-scroll-area::-webkit-scrollbar { width: 6px; height: 6px; }
         .table-scroll-area::-webkit-scrollbar-thumb { background: #e2b275; border-radius: 10px; }
+
+
+        .sort-icon {
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: rgba(226, 178, 117, 0.4); /* Alaphelyzetben halvány arany */
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .sort-icon:hover {
+            color: #e2b275; /* Hovernél erős arany */
+            transform: scale(1.3);
+        }
+
+        .sort-icon.active {
+            color: #ffffff; /* Aktív rendezés esetén fehér */
+        }
+
     </style>
 
     <nav class="navbar navbar-expand-lg navbar-light rounded mt-2 mx-2 border navbar-unified"
@@ -138,6 +151,11 @@
                             <i class="bi bi-person-plus-fill"></i> ÚJ SZEMÉLY
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-weight: bold; color: #000000;" href="#" data-bs-toggle="modal" data-bs-target="#mdl_Archivum">
+                            <i class="bi bi-archive-fill"></i> ARCHÍVUM
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -166,13 +184,29 @@
                 <thead>
                     <tr>
                         <th class="sticky-th text-end pe-2" style="width: 50px;"></th>
-                        <th class="sticky-th">Név</th>
+                        <th class="sticky-th">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span>Név</span>
+                                <div class="d-flex flex-column ms-2" style="line-height: 0.5;">
+                                    <i class="bi bi-caret-up-fill sort-icon" onclick="sortAgentTable('nev', 'asc')" title="Névsorrend"></i>
+                                    <i class="bi bi-caret-down-fill sort-icon" onclick="sortAgentTable('nev', 'desc')" title="Névsorrend visszafelé"></i>
+                                </div>
+                            </div>
+                        </th>
                         <th class="sticky-th">Rendfokozat</th>
                         <th class="sticky-th">Beosztás</th>
                         <th class="text-center sticky-th">Nemzeti</th>
                         <th class="text-center sticky-th">NATO</th>
                         <th class="text-center sticky-th">EU</th>
-                        <th class="text-center pe-4 sticky-th">Érvényesség</th>
+                        <th class="text-center pe-4 sticky-th">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <span>Érvényesség</span>
+                                <div class="d-flex flex-column ms-2" style="line-height: 0.5;">
+                                    <i class="bi bi-caret-up-fill sort-icon" onclick="sortAgentTable('date', 'asc')" title="Dátum szerint növekvő"></i>
+                                    <i class="bi bi-caret-down-fill sort-icon" onclick="sortAgentTable('date', 'desc')" title="Dátum szerint csökkenő"></i>
+                                </div>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -181,10 +215,7 @@
                     {% set is_expired = m.Ervenyesseg and m.Ervenyesseg < today %}
                     {% set is_critical = m.Ervenyesseg and m.Ervenyesseg <= limit_date and not is_expired %}
 
-                    <tr onclick="window.open('/persec/details/{{ m.id }}', '_blank')"
-                        class="agent-row {% if is_expired %}row-expired{% elif is_critical %}row-expiring-soon{% endif %}"
-                        style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);">
-
+                    <tr style="cursor: pointer;" onclick="loadAndOpenDetails({{ m.id }})">
                         <td class="text-end pe-2">
                             <span style="color: #e2b275; font-size: 0.9rem;">{{ m.titulus if m.titulus else '' }}</span>
                         </td>

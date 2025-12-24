@@ -139,7 +139,241 @@
     </div>
 </div>
 
+<!-- Részletes adatok modal eleje -->
+
+<div class="modal fade" id="mdl_PersonDetails" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content modal-content-custom" style="border: 2px solid #e2b275 !important; min-height: 650px;">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" style="color: #e2b275;">
+                    <i class="bi bi-person-badge-fill me-2"></i>
+                    <span id="detail_header_full_name">Betöltés...</span>
+                    <span id="detail_header_status" class="ms-2"></span>
+                    adatlapja
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-0">
+                <div class="d-flex h-100" style="min-height: 600px;">
+
+                    <div class="p-3" style="width: 25%; border-right: 1px solid rgba(226, 178, 117, 0.3); background-color: rgba(255,255,255,0.03);">
+                        <div class="accordion accordion-flush" id="acc_PersonDetails">
+
+                            <div class="accordion-item bg-transparent border-0 mb-2">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed custom-acc-btn" type="button" data-bs-toggle="collapse" data-bs-target="#coll_Szemelyi">
+                                        <i class="bi bi-person-vcard me-2"></i> Személyes adatok
+                                    </button>
+                                </h2>
+                                <div id="coll_Szemelyi" class="accordion-collapse collapse" data-bs-parent="#acc_PersonDetails">
+                                    <div class="accordion-body p-3">
+                                        <div class="row g-2">
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Titulus</label>
+                                                <input type="text" id="det_titulus" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Jelenlegi név</label>
+                                                <input type="text" id="det_nev" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Születési név</label>
+                                                <input type="text" id="det_szuletesiNev" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Születési hely</label>
+                                                <input type="text" id="det_szuletesiHely" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Születési idő</label>
+                                                <input type="text" id="det_szuletesiIdo" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Anyja neve</label>
+                                                <input type="text" id="det_anyjaNeve" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item bg-transparent border-0 mb-2">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed custom-acc-btn" type="button" data-bs-toggle="collapse" data-bs-target="#coll_Munkahelyi">
+                                        <i class="bi bi-briefcase me-2"></i> Munkahelyi adatok
+                                    </button>
+                                </h2>
+                                <div id="coll_Munkahelyi" class="accordion-collapse collapse" data-bs-parent="#acc_PersonDetails">
+                                    <div class="accordion-body p-3">
+                                        <div class="row g-2">
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Rendfokozat</label>
+                                                <select id="det_rendfokozat" class="form-select form-select-sm">
+                                                    {% for r in rendfokozatok %}
+                                                        <option value="{{ r.id }}">{{ r.rendfokozat }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Beosztás</label>
+                                                <select id="det_beosztas" class="form-select form-select-sm">
+                                                    {% for b in beosztasok %}
+                                                        <option value="{{ b.id }}">{{ b.beosztas }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Szervezeti egység</label>
+                                                <input type="text" id="det_szervezetiElem" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small text-white-50 mb-0">Megjegyzés (Memo)</label>
+                                                <textarea id="det_memo" class="form-control form-control-sm" rows="4" style="resize: none;"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item bg-transparent border-0 mb-2">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed custom-acc-btn" type="button" data-bs-toggle="collapse" data-bs-target="#coll_Rendszer">
+                                        <i class="bi bi-shield-lock me-2"></i> Rendszerhozzáférések
+                                    </button>
+                                </h2>
+                                <div id="coll_Rendszer" class="accordion-collapse collapse" data-bs-parent="#acc_PersonDetails">
+                                    <div class="accordion-body p-3 text-white-50 small text-center">
+                                        Hamarosan...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item bg-transparent border-0">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed custom-acc-btn" type="button" data-bs-toggle="collapse" data-bs-target="#coll_Fajlok">
+                                        <i class="bi bi-shield-lock me-2"></i> Felcsatolt fájlok
+                                    </button>
+                                </h2>
+                                <div id="coll_Fajlok" class="accordion-collapse collapse" data-bs-parent="#acc_PersonDetails">
+                                    <div class="accordion-body p-3 text-white-50 small text-center">
+                                        Hamarosan...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4" style="width: 75%; background-color: rgba(0,0,0,0.15);">
+                        <div id="personDetailsContent">
+                            <div class="container-fluid py-2">
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="d-flex align-items-center p-4 rounded-4 shadow-lg"
+                                             style="background: linear-gradient(135deg, rgba(226, 178, 117, 0.1) 0%, rgba(18, 18, 18, 0.8) 100%);
+                                                    border: 1px solid rgba(226, 178, 117, 0.3);">
+
+                                            <div class="flex-shrink-0 me-4 d-none d-lg-block">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                     style="width: 80px; height: 80px; background: rgba(226, 178, 117, 0.1); border: 2px solid #e2b275;">
+                                                    <i class="bi bi-person-badge" style="font-size: 2.5rem; color: #e2b275;"></i>
+
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <h2 class="display-6 fw-bold mb-1" id="dash_nev" style="color: #e2b275; letter-spacing: 1px;">Betöltés...</h2>
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <span class="text-white-50"><i class="bi bi-award me-1"></i> <span id="dash_rendfokozat">-</span></span>
+                                                    <span style="color: rgba(226, 178, 117, 0.5);">|</span>
+                                                    <span class="text-white-50"><i class="bi bi-briefcase me-1"></i> <span id="dash_beosztas">-</span></span>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
+                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #e2b275; font-size: 0.75rem;"><i class="bi bi-shield-shaded me-2"></i>Nemzeti SzBT</h6>
+                                            <div class="text-center py-2 text-muted italic small" id="dash_nemzeti">Nincs adat</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
+                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #007bff; font-size: 0.75rem;"><i class="bi bi-globe me-2"></i>NATO SzBT</h6>
+                                            <div class="text-center py-2 text-muted italic small" id="dash_nato">Nincs adat</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
+                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #2b823a; font-size: 0.75rem;"><i class="bi bi-flag me-2"></i>EU SzBT</h6>
+                                            <div class="text-center py-2 text-muted italic small" id="dash_eu">Nincs adat</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
+                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #ffc107; font-size: 0.75rem;"><i class="bi bi-key me-2"></i>TTNY</h6>
+                                            <div class="text-center py-2 text-muted italic small" id="dash_ttny">Nincs adat</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
+                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #dc3545; font-size: 0.75rem;"><i class="bi bi-lock me-2"></i>Rejtjel</h6>
+                                            <div class="text-center py-2 text-muted italic small" id="dash_rejtjel">Nincs adat</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
+                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #17a2b8; font-size: 0.75rem;"><i class="bi bi-eye me-2"></i>BSzV</h6>
+                                            <div class="text-center py-2 text-muted italic small" id="dash_bszv">Nincs adat</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal" style="background-color: #333; border: 1px solid #555; color: #fff;">
+                   Mégse
+                </button>
+                <button type="button"
+                        class="btn btn-secondary"
+                        style="background-color: #e2b275 !important; border: none; color: #000; font-weight: bold; padding-left: 20px; padding-right: 20px;"
+                        data-bs-dismiss="modal">
+                   <i class="bi bi-save"></i> Adatok mentése
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Részletes adatok modal vége -->
+
 <style>
+
+
+    /* Egyedi stílus az accordion gombokhoz a PerSec modalon belül */
+    .custom-acc-btn {
+        background-color: rgba(226, 178, 117, 0.05) !important;
+        color: #e2b275 !important;
+        border: 1px solid rgba(226, 178, 117, 0.2) !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+    }
+    .custom-acc-btn:not(.collapsed) {
+        background-color: rgba(226, 178, 117, 0.15) !important;
+        border-color: #e2b275 !important;
+    }
+    .custom-acc-btn::after {
+        filter: invert(78%) sepia(35%) saturate(542%) hue-rotate(345deg) brightness(93%) contrast(89%);
+    }
+    /*eddig*/
+
     .custom-radio {
         border-color: #e2b275 !important;
         color: #e2b275 !important;

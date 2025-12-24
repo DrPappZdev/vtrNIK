@@ -13,6 +13,7 @@ from models.minszintek import MinositesiSzint
 from models.szbtnemzeti import NemzetiSzbt
 from models.szbtnato import NatoSzbt
 from models.szbteu import EuSzbt
+from models.szervezetifa import Szervezetifa
 
 def init_db(app):
     db.init_app(app)

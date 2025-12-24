@@ -14,7 +14,7 @@ class Munkatarsak(db.Model):
     anyjaNeve = db.Column(db.String(50), nullable=False)
     rendfokozat = db.Column(db.Integer, nullable=False)
     beosztas = db.Column(db.Integer, nullable=False)
-    szervezetiElem = db.Column(db.Integer, nullable=True)
+    szervezetiElem = db.Column(db.String(15), nullable=True)
     memo = db.Column(db.Text, nullable=True)
 
 def __init__(self, **kwargs):

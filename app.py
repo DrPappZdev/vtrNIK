@@ -4,7 +4,7 @@ from pydoc import text
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from functools import wraps
 from models import db, Users, Munkatarsak, Rendfokozat, Beosztasok, Jogok, AktivMunkatarsak
-from models import MinositesiSzint, NemzetiSzbt, NatoSzbt, EuSzbt
+from models import MinositesiSzint, NemzetiSzbt, NatoSzbt, EuSzbt, Szervezetifa
 from models import init_db
 from werkzeug.security import check_password_hash
 from config import Config
@@ -49,6 +49,69 @@ def permission_required(function_column):
             return f(*args, **kwargs)
         return decorated_function
     return decorator
+
+
+@app.route('/get_person_details/<int:person_id>')
+@login_required
+def get_person_details(person_id):
+    try:
+        # 1. Alapadatok és a kapcsolódó szöveges megnevezések lekérése JOIN-okkal
+        # Egyszerre kérjük le a rendfokozatot és a beosztást is
+        result = db.session.query(
+            Munkatarsak,
+            Rendfokozat,
+            Beosztasok
+        ).join(Rendfokozat, Munkatarsak.rendfokozat == Rendfokozat.id) \
+            .join(Beosztasok, Munkatarsak.beosztas == Beosztasok.id) \
+            .filter(Munkatarsak.id == person_id).first()
+
+        if not result:
+            return {"error": "Személy nem található"}, 404
+
+        person, rf_obj, beo_obj = result
+
+        # 2. Nemzeti SzBT adatok lekérése (mint az előbb)
+        szbt_data = db.session.query(NemzetiSzbt, MinositesiSzint) \
+            .join(MinositesiSzint, NemzetiSzbt.szbtNemMinSzint == MinositesiSzint.id) \
+            .filter(NemzetiSzbt.agentId == person_id).first()
+
+        nemzeti_szint_szoveg = None
+        nemzeti_lejarat = "---"
+        if szbt_data:
+            szbt, m_szint = szbt_data
+            nemzeti_szint_szoveg = m_szint.minSzint
+            nemzeti_lejarat = szbt.szbtNemLejaratiDatum.strftime('%Y.%m.%d.') if szbt.szbtNemLejaratiDatum else "---"
+
+        # 3. Szervezeti egység (marad a régi logikád)
+        szervezeti_szoveg = "Nincs megadva"
+        if person.szervezetiElem:
+            szf = Szervezetifa.query.get(person.szervezetiElem)
+            if szf:
+                szervezeti_szoveg = f"Főig: {szf.kod_Foig} / Ig: {szf.kod_Ig} / Oszt: {szf.kod_O}"
+
+        # 4. JSON válasz: ID-k a szerkesztéshez, SZÖVEGEK a dashboardhoz
+        return {
+            "titulus": person.titulus or "",
+            "nev": person.nev or "",
+            "valid_e": person.valid_e,
+            "szuletesiNev": person.szuletesiNev or "",
+            "szuletesiHely": person.szuletesiHely or "",
+            "szuletesiIdo": person.szuletesiIdo.strftime('%Y-%m-%d') if person.szuletesiIdo else "",
+            "anyjaNeve": person.anyjaNeve or "",
+            "rendfokozat_id": person.rendfokozat,  # ID a select-hez
+            "rendfokozat_nev": rf_obj.rendfokozat,  # Szöveg a dash-hez
+            "beosztas_id": person.beosztas,  # ID a select-hez
+            "beosztas_nev": beo_obj.beosztas,  # Szöveg a dash-hez
+            "szervezetiElem": str(person.szervezetiElem or ""),
+            "szervezeti_szoveg": szervezeti_szoveg,
+            "memo": person.memo or "",
+            "nemzeti_szint": nemzeti_szint_szoveg,
+            "nemzeti_ervenyesseg": nemzeti_lejarat
+        }
+
+    except Exception as e:
+        print(f"Szerver hiba: {e}")
+        return {"error": str(e)}, 500
 
 @app.route('/persec/add_person', methods=['POST'])
 @permission_required('func_Persec')

@@ -134,3 +134,150 @@ function copyName() {
         }
     }
 }
+
+/**
+ * Személyi adatlap megnyitása és feltöltése
+ */
+function loadAndOpenDetails(personId) {
+    console.log("Kattintás észlelve, ID:", personId);
+    const modalEl = document.getElementById('mdl_PersonDetails');
+    if (!modalEl) {
+        console.error("HIBA: A 'mdl_PersonDetails' nevű modal nem található a HTML-ben!");
+        alert("Hiba: A modal struktúra hiányzik az oldalról!");
+        return;
+    }
+    fetch(`/get_person_details/${personId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Hálózati hiba, vagy hiányzó rekordId');
+            return response.json();
+        })
+        .then(data => {
+            console.log("Szerver válasza:", data);
+            document.getElementById('detail_header_full_name').innerText = (data.titulus ? data.titulus + " " : "") + data.nev;
+            const statusContainer = document.getElementById('detail_header_status');
+            if (statusContainer) {
+                if (data.valid_e == 1 || data.valid_e === true) {
+                    statusContainer.innerHTML = '<span class="badge rounded-pill" style="background-color: #198754 !important; color: #ffffff !important; border: 1px solid #ffffff !important; box-shadow: 0 0 10px rgba(25, 135, 84, 0.8) !important; text-transform: uppercase;">Aktív</span>';
+                } else {
+                    statusContainer.innerHTML = '<span class="badge rounded-pill" style="background-color: #dc3545 !important; color: #ffffff !important; border: 1px solid #ffffff !important; box-shadow: 0 0 10px rgba(220, 53, 69, 0.8) !important; text-transform: uppercase;">Archivált</span>';
+                }
+            }
+            document.getElementById('detail_header_full_name').innerText = (data.titulus ? data.titulus + " " : "") + data.nev;
+            document.getElementById('det_titulus').value = data.titulus || '';
+            document.getElementById('det_nev').value = data.nev || '';
+            document.getElementById('det_szuletesiNev').value = data.szuletesiNev || '';
+            document.getElementById('det_szuletesiHely').value = data.szuletesiHely || '';
+            document.getElementById('det_szuletesiIdo').value = data.szuletesiIdo || '';
+            document.getElementById('det_anyjaNeve').value = data.anyjaNeve || '';
+            document.getElementById('det_rendfokozat').value = data.rendfokozat;
+            document.getElementById('det_beosztas').value = data.beosztas;
+            document.getElementById('det_szervezetiElem').value = data.szervezetiElem;
+            document.getElementById('det_memo').value = data.memo;
+            const teljesNev = (data.titulus ? data.titulus + " " : "") + data.nev;
+            document.getElementById('dash_nev').innerText = teljesNev;
+            const rfSelect = document.getElementById('det_rendfokozat');
+            const rfText = rfSelect.options[rfSelect.selectedIndex] ? rfSelect.options[rfSelect.selectedIndex].text : "-";
+            document.getElementById('dash_rendfokozat').innerText = rfText;
+            const beoSelect = document.getElementById('det_beosztas');
+            const beoText = beoSelect.options[beoSelect.selectedIndex] ? beoSelect.options[beoSelect.selectedIndex].text : "-";
+            document.getElementById('dash_beosztas').innerText = beoText;
+
+            // Bal oldali szerkeszthető mezők (ID-val állítjuk be a select-et)
+document.getElementById('det_rendfokozat').value = data.rendfokozat_id;
+document.getElementById('det_beosztas').value = data.beosztas_id;
+
+// Jobb oldali Dashboard (A szöveges nevet írjuk ki)
+document.getElementById('dash_rendfokozat').innerText = data.rendfokozat_nev;
+document.getElementById('dash_beosztas').innerText = data.beosztas_nev;
+
+// Dashboard adatok frissítése (Jobb oldal)
+const nemzetiContainer = document.getElementById('dash_nemzeti');
+
+if (data.nemzeti_szint) {
+    // Összeállítjuk a neonos badge-et (stílus a szemelyibiztonsag.html alapján)
+    nemzetiContainer.innerHTML = `
+        <div class="d-flex flex-column align-items-center gap-3">
+            <span class="badge border"
+                  style="min-width: 120px; border-color: #ffb300 !important; color: #ffb300 !important;
+                         background: rgba(255, 179, 0, 0.1); font-weight: bold; text-transform: uppercase;
+                         font-size: 0.8rem; box-shadow: 0 0 15px rgba(255, 179, 0, 0.4); padding: 8px 12px;">
+                ${data.nemzeti_szint}
+            </span>
+            <div class="text-white-50 small">
+                <i class="bi bi-calendar3 me-1"></i> Érvényes:
+                <span class="text-white fw-bold">${data.nemzeti_ervenyesseg}</span>
+            </div>
+        </div>
+    `;
+} else {
+    nemzetiContainer.innerHTML = '<div class="text-muted italic small py-3">Nincs minősítés</div>';
+}
+
+
+
+
+
+            // Kényszerített indítás
+            const detailsModal = new bootstrap.Modal(modalEl);
+            detailsModal.show();
+        })
+        .catch(err => {
+            console.error("AJAX hiba:", err);
+            alert("Nem sikerült betölteni az adatokat! (ID: " + personId + ")");
+        });
+}
+
+function sortAgentTable(column, direction) {
+    const table = document.querySelector(".table-viewport table");
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    // Rendezési logika
+    const sortedRows = rows.sort((a, b) => {
+        let valA, valB;
+
+        if (column === 'nev') {
+            // Név lekérése a második oszlopból (index 1)
+            valA = a.cells[1].innerText.trim().toLowerCase();
+            valB = b.cells[1].innerText.trim().toLowerCase();
+
+            // Magyar ékezetes karakterek helyes kezelése (localeCompare)
+            return direction === 'asc'
+                ? valA.localeCompare(valB, 'hu')
+                : valB.localeCompare(valA, 'hu');
+        }
+
+        else if (column === 'date') {
+            // Dátum lekérése az utolsó oszlopból (index 7)
+            // A "---" vagy üres értékeket a végére tesszük
+            valA = a.cells[7].innerText.trim();
+            valB = b.cells[7].innerText.trim();
+
+            if (valA === "---") valA = "0000.00.00.";
+            if (valB === "---") valB = "0000.00.00.";
+
+            return direction === 'asc'
+                ? valA.localeCompare(valB)
+                : valB.localeCompare(valA);
+        }
+    });
+
+    // A régi sorok eltávolítása és az újak hozzáadása
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    sortedRows.forEach(row => tbody.appendChild(row));
+
+    // Opcionális: Vizuális visszajelzés (ikonok színezése)
+    updateSortIcons(column, direction);
+}
+
+function updateSortIcons(column, direction) {
+    // Összes ikon alaphelyzetbe
+    document.querySelectorAll('.sort-icon').forEach(icon => icon.classList.remove('active'));
+
+    // Az aktuálisan kiválasztott ikon kiemelése
+    // Ez feltételezi, hogy az onclick eseményben átadod melyik oszlop/irány
+    // (A HTML-ben a korábban javasolt módon kell lennie)
+}

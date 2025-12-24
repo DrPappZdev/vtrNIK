@@ -150,63 +150,64 @@
                         <th class="text-center pe-4 sticky-th">Érvényesség</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for m in munkatarsak %}
-                        {# ADATOK ÉS DÁTUM LOGIKA #}
-                        {% set n_text = minszint.get(nemzeti_map.get(m.id)|string) %}
-                        {% set nato_text = minszint.get(nato_map.get(m.id)|string) %}
-                        {% set eu_text = minszint.get(eu_map.get(m.id)|string) %}
-                        {% set lejarat = lejarati_map.get(m.id) %}
+<tbody>
+    {% for m in munkatarsak %}
+        {# ADATOK ÉS DÁTUM LOGIKA #}
+        {% set n_text = minszint.get(nemzeti_map.get(m.id)|string) %}
+        {% set nato_text = minszint.get(nato_map.get(m.id)|string) %}
+        {% set eu_text = minszint.get(eu_map.get(m.id)|string) %}
+        {% set lejarat = lejarati_map.get(m.id) %}
 
-                        {# Kritikus határidő kiszámítása (30 napos limit_date használatával) #}
-                        {% set is_expired = lejarat and lejarat < today %}
-                        {% set is_critical = lejarat and lejarat <= limit_date and not is_expired %}
+        {# Kritikus határidő kiszámítása #}
+        {% set is_expired = lejarat and lejarat < today %}
+        {% set is_critical = lejarat and lejarat <= limit_date and not is_expired %}
 
-                        <tr onclick="window.open('/persec/details/{{ m.id }}', '_blank')"
-                            class="agent-row {% if is_expired %}row-expired{% elif is_critical %}row-expiring-soon{% endif %}"
-                            style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <tr onclick="loadAndOpenDetails({{ m.id }})"
+            class="agent-row {% if is_expired %}row-expired{% elif is_critical %}row-expiring-soon{% endif %}"
+            style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);">
 
-                            <td class="text-end pe-2">
-                                <span style="color: #e2b275; font-size: 0.9rem;">{{ m.titulus if m.titulus else '' }}</span>
-                            </td>
-                            <td><span style="color: #e2b275; font-weight: bold;">{{ m.nev }}</span></td>
-                            <td>{{ ranks.get(m.rendfokozat, '-') }}</td>
-                            <td><small class="text-white-50">{{ positions.get(m.beosztas, '-') }}</small></td>
+            <td class="text-end pe-2">
+                <span style="color: #e2b275; font-size: 0.9rem;">{{ m.titulus if m.titulus else '' }}</span>
+            </td>
+            <td><span style="color: #e2b275; font-weight: bold;">{{ m.nev }}</span></td>
+            <td>{{ ranks.get(m.rendfokozat, '-') }}</td>
+            <td><small class="text-white-50">{{ positions.get(m.beosztas, '-') }}</small></td>
 
-                            <td class="text-center">
-                                {% if n_text %}
-                                    <span class="badge border badge-glow b-n">{{ n_text }}</span>
-                                {% else %}<span class="text-muted">-</span>{% endif %}
-                            </td>
+            <td class="text-center">
+                {% if n_text %}
+                    <span class="badge border badge-glow b-n">{{ n_text }}</span>
+                {% else %}<span class="text-muted">-</span>{% endif %}
+            </td>
 
-                            <td class="text-center">
-                                {% if nato_text %}
-                                    <span class="badge border badge-glow b-nato">{{ nato_text }}</span>
-                                {% else %}<span class="text-muted">-</span>{% endif %}
-                            </td>
+            <td class="text-center">
+                {% if nato_text %}
+                    <span class="badge border badge-glow b-nato">{{ nato_text }}</span>
+                {% else %}<span class="text-muted">-</span>{% endif %}
+            </td>
 
-                            <td class="text-center">
-                                {% if eu_text %}
-                                    <span class="badge border badge-glow b-eu">{{ eu_text }}</span>
-                                {% else %}<span class="text-muted">-</span>{% endif %}
-                            </td>
+            <td class="text-center">
+                {% if eu_text %}
+                    <span class="badge border badge-glow b-eu">{{ eu_text }}</span>
+                {% else %}<span class="text-muted">-</span>{% endif %}
+            </td>
 
-                            <td class="text-center pe-4 text-nowrap">
-                                {% if lejarat %}
-                                    <span class="{% if is_expired %}text-danger fw-bold{% elif is_critical %}date-critical{% else %}text-white-50{% endif %}">
-                                        {{ lejarat.strftime('%Y.%m.%d.') }}
-                                    </span>
-                                {% else %}
-                                    <span class="text-muted small">---</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+            <td class="text-center pe-4 text-nowrap">
+                {% if lejarat %}
+                    <span class="{% if is_expired %}text-danger fw-bold{% elif is_critical %}date-critical{% else %}text-white-50{% endif %}">
+                        {{ lejarat.strftime('%Y.%m.%d.') }}
+                    </span>
+                {% else %}
+                    <span class="text-muted small">---</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
             </table>
         </div>
     </div>
 
+    {% include 'persec_modals.html' %}
     {% include 'adminmenu_modals.html' %}
     {% include 'about_modals.html' %}
 
