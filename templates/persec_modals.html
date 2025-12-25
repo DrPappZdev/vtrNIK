@@ -297,37 +297,37 @@
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
-                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #e2b275; font-size: 0.75rem;"><i class="bi bi-shield-shaded me-2"></i>Nemzeti SzBT</h6>
+                                            <h6 class="fw-bold mb-3" style="color: #e2b275; font-size: 0.75rem;"><i class="bi bi-shield-shaded me-2"></i>Nemzeti SzBT</h6>
                                             <div class="text-center py-2 text-muted italic small" id="dash_nemzeti">Nincs adat</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
-                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #007bff; font-size: 0.75rem;"><i class="bi bi-globe me-2"></i>NATO SzBT</h6>
+                                            <h6 class="fw-bold mb-3" style="color: #007bff; font-size: 0.75rem;"><i class="bi bi-globe me-2"></i>NATO SzBT</h6>
                                             <div class="text-center py-2 text-muted italic small" id="dash_nato">Nincs adat</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
-                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #2b823a; font-size: 0.75rem;"><i class="bi bi-flag me-2"></i>EU SzBT</h6>
+                                            <h6 class="fw-bold mb-3" style="color: #2b823a; font-size: 0.75rem;"><i class="bi bi-flag me-2"></i>EU SzBT</h6>
                                             <div class="text-center py-2 text-muted italic small" id="dash_eu">Nincs adat</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
-                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #ffc107; font-size: 0.75rem;"><i class="bi bi-key me-2"></i>TTNY</h6>
+                                            <h6 class="fw-bold mb-3" style="color: #ffc107; font-size: 0.75rem;"><i class="bi bi-key me-2"></i>Titoktartási nyilatkozat</h6>
                                             <div class="text-center py-2 text-muted italic small" id="dash_ttny">Nincs adat</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
-                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #dc3545; font-size: 0.75rem;"><i class="bi bi-lock me-2"></i>Rejtjel</h6>
+                                            <h6 class="fw-bold mb-3" style="color: #dc3545; font-size: 0.75rem;"><i class="bi bi-lock me-2"></i>Rejtjelhozzáférési engedély</h6>
                                             <div class="text-center py-2 text-muted italic small" id="dash_rejtjel">Nincs adat</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="card h-100 bg-dark border-secondary bg-opacity-25 rounded-4 p-3 shadow-sm">
-                                            <h6 class="text-uppercase fw-bold mb-3" style="color: #17a2b8; font-size: 0.75rem;"><i class="bi bi-eye me-2"></i>BSzV</h6>
+                                            <h6 class="fw-bold mb-3" style="color: #17a2b8; font-size: 0.75rem;"><i class="bi bi-eye me-2"></i>Biztonsági szakvélemény</h6>
                                             <div class="text-center py-2 text-muted italic small" id="dash_bszv">Nincs adat</div>
                                         </div>
                                     </div>
@@ -353,6 +353,39 @@
 </div>
 
 <!-- Részletes adatok modal vége -->
+
+
+<!-- SzBT részleteket kibontó Modal eleje -->
+
+<div class="modal fade" id="mdl_NemzetiDetails" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #121212; border: 2px solid #e2b275; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.9);">
+
+            <div class="modal-header" style="border-bottom: 1px solid rgba(226, 178, 117, 0.2);">
+                <h5 class="modal-title fw-bold" style="color: #e2b275;">
+                    <i class="bi bi-shield-lock-fill me-2"></i> A Nemzeti SzBT részletei
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body py-5 text-center">
+                <p class="text-white-50 italic">Kidolgozás alatt...</p>
+                <i class="bi bi-gear-wide-connected" style="font-size: 3rem; color: rgba(226, 178, 117, 0.3);"></i>
+            </div>
+
+            <div class="modal-footer" style="border-top: 1px solid rgba(226, 178, 117, 0.2);">
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal"
+                        style="background-color: #333; border: 1px solid #555; color: #fff; padding-left: 20px; padding-right: 20px;">
+                   Mégse
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- SzBT részleteket kibontó Modal vége -->
 
 <style>
 

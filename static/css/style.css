@@ -1,3 +1,64 @@
+
+/* --- SZEMÉLYI BIZTONSÁGI KÁRTYA STÍLUS --- */
+/* Neon kártya belső elrendezése */
+
+.hover-card-effect {
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.hover-card-effect:hover {
+    transform: scale(1.05); /* Kicsit megnő */
+    filter: brightness(1.2); /* Kicsit kivilágosodik */
+}
+
+.szbt-mini-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.nemzeti-label {
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #e2b275;
+    font-size: 0.9rem;
+}
+
+/* Zöld Neon Badge */
+.badge-neon-green {
+    background: transparent !important;
+    color: #39ff14 !important;
+    border: 1px solid #39ff14 !important;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.5), inset 0 0 5px rgba(57, 255, 20, 0.5);
+    text-shadow: 0 0 5px #39ff14;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Vörös Neon Badge */
+.badge-neon-red {
+    background: transparent !important;
+    color: #ff073a !important;
+    border: 1px solid #ff073a !important;
+    box-shadow: 0 0 10px rgba(255, 7, 58, 0.5), inset 0 0 5px rgba(255, 7, 58, 0.5);
+    text-shadow: 0 0 5px #ff073a;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    animation: neon-pulse 1.5s infinite alternate;
+}
+
+@keyframes neon-pulse {
+    from { opacity: 0.8; box-shadow: 0 0 5px #ff073a; }
+    to { opacity: 1; box-shadow: 0 0 15px #ff073a; }
+}
+
+
+
 /* --- 1. RENDSZER VISSZAJELZÉS (FLASH MODAL) --- */
 #systemFeedbackModal {
     display: none;

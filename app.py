@@ -9,7 +9,7 @@ from models import init_db
 from werkzeug.security import check_password_hash
 from config import Config
 from utility import log_event
-from datetime import datetime
+from datetime import date
 from sqlalchemy import or_
 
 app = Flask(__name__)
@@ -89,6 +89,7 @@ def get_person_details(person_id):
             if szf:
                 szervezeti_szoveg = f"Főig: {szf.kod_Foig} / Ig: {szf.kod_Ig} / Oszt: {szf.kod_O}"
 
+        nemzeti_lejarat_iso = szbt.szbtNemLejaratiDatum.isoformat() if szbt.szbtNemLejaratiDatum else None
         # 4. JSON válasz: ID-k a szerkesztéshez, SZÖVEGEK a dashboardhoz
         return {
             "titulus": person.titulus or "",
@@ -106,7 +107,10 @@ def get_person_details(person_id):
             "szervezeti_szoveg": szervezeti_szoveg,
             "memo": person.memo or "",
             "nemzeti_szint": nemzeti_szint_szoveg,
-            "nemzeti_ervenyesseg": nemzeti_lejarat
+            "nemzeti_ervenyesseg": nemzeti_lejarat,
+            "nemzeti_szint": nemzeti_szint_szoveg,
+            "nemzeti_ervenyesseg": nemzeti_lejarat,
+            "nemzeti_lejarat_iso": nemzeti_lejarat_iso
         }
 
     except Exception as e:

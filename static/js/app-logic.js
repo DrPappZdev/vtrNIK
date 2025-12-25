@@ -141,90 +141,109 @@ function copyName() {
 function loadAndOpenDetails(personId) {
     console.log("Kattintás észlelve, ID:", personId);
     const modalEl = document.getElementById('mdl_PersonDetails');
+
     if (!modalEl) {
-        console.error("HIBA: A 'mdl_PersonDetails' nevű modal nem található a HTML-ben!");
-        alert("Hiba: A modal struktúra hiányzik az oldalról!");
+        console.error("HIBA: A 'mdl_PersonDetails' nevű modal nem található!");
         return;
     }
+
     fetch(`/get_person_details/${personId}`)
         .then(response => {
-            if (!response.ok) throw new Error('Hálózati hiba, vagy hiányzó rekordId');
+            if (!response.ok) throw new Error('Hálózati hiba');
             return response.json();
         })
         .then(data => {
             console.log("Szerver válasza:", data);
-            document.getElementById('detail_header_full_name').innerText = (data.titulus ? data.titulus + " " : "") + data.nev;
+
+            // --- 1. ALAPADATOK BETÖLTÉSE ---
+            const teljesNev = (data.titulus ? data.titulus + " " : "") + data.nev;
+            document.getElementById('detail_header_full_name').innerText = teljesNev;
+            document.getElementById('dash_nev').innerText = teljesNev;
+
+            // Státusz badge (Aktív/Archivált)
             const statusContainer = document.getElementById('detail_header_status');
             if (statusContainer) {
                 if (data.valid_e == 1 || data.valid_e === true) {
-                    statusContainer.innerHTML = '<span class="badge rounded-pill" style="background-color: #198754 !important; color: #ffffff !important; border: 1px solid #ffffff !important; box-shadow: 0 0 10px rgba(25, 135, 84, 0.8) !important; text-transform: uppercase;">Aktív</span>';
+                    statusContainer.innerHTML = '<span class="badge rounded-pill bg-success border border-white shadow-sm">AKTÍV</span>';
                 } else {
-                    statusContainer.innerHTML = '<span class="badge rounded-pill" style="background-color: #dc3545 !important; color: #ffffff !important; border: 1px solid #ffffff !important; box-shadow: 0 0 10px rgba(220, 53, 69, 0.8) !important; text-transform: uppercase;">Archivált</span>';
+                    statusContainer.innerHTML = '<span class="badge rounded-pill bg-danger border border-white shadow-sm">ARCHIVÁLT</span>';
                 }
             }
-            document.getElementById('detail_header_full_name').innerText = (data.titulus ? data.titulus + " " : "") + data.nev;
+
+            // Input mezők kitöltése
             document.getElementById('det_titulus').value = data.titulus || '';
             document.getElementById('det_nev').value = data.nev || '';
             document.getElementById('det_szuletesiNev').value = data.szuletesiNev || '';
             document.getElementById('det_szuletesiHely').value = data.szuletesiHely || '';
             document.getElementById('det_szuletesiIdo').value = data.szuletesiIdo || '';
             document.getElementById('det_anyjaNeve').value = data.anyjaNeve || '';
-            document.getElementById('det_rendfokozat').value = data.rendfokozat;
-            document.getElementById('det_beosztas').value = data.beosztas;
-            document.getElementById('det_szervezetiElem').value = data.szervezetiElem;
-            document.getElementById('det_memo').value = data.memo;
-            const teljesNev = (data.titulus ? data.titulus + " " : "") + data.nev;
-            document.getElementById('dash_nev').innerText = teljesNev;
-            const rfSelect = document.getElementById('det_rendfokozat');
-            const rfText = rfSelect.options[rfSelect.selectedIndex] ? rfSelect.options[rfSelect.selectedIndex].text : "-";
-            document.getElementById('dash_rendfokozat').innerText = rfText;
-            const beoSelect = document.getElementById('det_beosztas');
-            const beoText = beoSelect.options[beoSelect.selectedIndex] ? beoSelect.options[beoSelect.selectedIndex].text : "-";
-            document.getElementById('dash_beosztas').innerText = beoText;
+            document.getElementById('det_rendfokozat').value = data.rendfokozat_id;
+            document.getElementById('det_beosztas').value = data.beosztas_id;
+            document.getElementById('det_szervezetiElem').value = data.szervezetiElem || '';
+            document.getElementById('det_memo').value = data.memo || '';
 
-            // Bal oldali szerkeszthető mezők (ID-val állítjuk be a select-et)
-document.getElementById('det_rendfokozat').value = data.rendfokozat_id;
-document.getElementById('det_beosztas').value = data.beosztas_id;
+            // Dashboard szövegek
+            document.getElementById('dash_rendfokozat').innerText = data.rendfokozat_nev || '-';
+            document.getElementById('dash_beosztas').innerText = data.beosztas_nev || '-';
 
-// Jobb oldali Dashboard (A szöveges nevet írjuk ki)
-document.getElementById('dash_rendfokozat').innerText = data.rendfokozat_nev;
-document.getElementById('dash_beosztas').innerText = data.beosztas_nev;
+            // --- 2. NEMZETI BIZTONSÁGI KÁRTYA LOGIKA ---
+            const nemzetiContainer = document.getElementById('dash_nemzeti');
 
-// Dashboard adatok frissítése (Jobb oldal)
-const nemzetiContainer = document.getElementById('dash_nemzeti');
+            if (data.nemzeti_szint && data.nemzeti_ervenyesseg !== "---") {
+                // MAI DÁTUM (időpont nélkül az összehasonlításhoz)
+                const ma = new Date();
+                ma.setHours(0, 0, 0, 0);
 
-if (data.nemzeti_szint) {
-    // Összeállítjuk a neonos badge-et (stílus a szemelyibiztonsag.html alapján)
-    nemzetiContainer.innerHTML = `
-        <div class="d-flex flex-column align-items-center gap-3">
-            <span class="badge border"
-                  style="min-width: 120px; border-color: #ffb300 !important; color: #ffb300 !important;
-                         background: rgba(255, 179, 0, 0.1); font-weight: bold; text-transform: uppercase;
-                         font-size: 0.8rem; box-shadow: 0 0 15px rgba(255, 179, 0, 0.4); padding: 8px 12px;">
-                ${data.nemzeti_szint}
-            </span>
-            <div class="text-white-50 small">
-                <i class="bi bi-calendar3 me-1"></i> Érvényes:
-                <span class="text-white fw-bold">${data.nemzeti_ervenyesseg}</span>
-            </div>
-        </div>
-    `;
-} else {
-    nemzetiContainer.innerHTML = '<div class="text-muted italic small py-3">Nincs minősítés</div>';
-}
+                // LEJÁRATI DÁTUM KONVERTÁLÁSA (YYYY.MM.DD. -> YYYY-MM-DD)
+                // A JS a kötőjeles formátumot szereti, az utolsó pontot pedig levágjuk
+                const lejaratTiszta = data.nemzeti_ervenyesseg.replaceAll('.', '-').replace(/-$/, '');
+                const lejaratDate = new Date(lejaratTiszta);
 
+                // Különbség napokban
+                const diffTime = lejaratDate - ma;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+                // Neon badge kiválasztása
+                let countdownHtml = '';
+                if (diffDays > 0) {
+                    countdownHtml = `<div class="badge-neon-green mt-2">Még ${diffDays} nap</div>`;
+                } else if (diffDays === 0) {
+                    countdownHtml = `<div class="badge-neon-red mt-2">MA JÁR LE!</div>`;
+                } else {
+                    countdownHtml = `<div class="badge-neon-red mt-2">LEJÁRT (${Math.abs(diffDays)} napja)</div>`;
+                }
 
+                // Kártya felépítése
+                // Kártya összeállítása kattintható konténerrel
+                nemzetiContainer.style.cursor = "pointer"; // Hogy látszódjon: kattintható
+                nemzetiContainer.setAttribute("onclick", "openNemzetiDetails()"); // Kattintásra hívja a függvényt
 
+                nemzetiContainer.innerHTML = `
+                    <div class="d-flex flex-column align-items-center hover-card-effect">
+                        <div class="text-uppercase fw-bold mb-1" style="color: #e2b275; font-size: 0.7rem; letter-spacing: 2px;">NEMZETI</div>
+                        <div class="text-white fw-bold mb-1" style="font-size: 1.1rem;">${data.nemzeti_szint}</div>
+                        <div class="text-white-50 small mb-1">${data.nemzeti_ervenyesseg}</div>
+                        ${countdownHtml}
+                    </div>
+                `;
+            } else {
+                nemzetiContainer.innerHTML = '<div class="text-muted italic small py-3">Nincs adat</div>';
+            }
 
-            // Kényszerített indítás
+            // --- 3. MODAL MEGJELENÍTÉSE ---
             const detailsModal = new bootstrap.Modal(modalEl);
             detailsModal.show();
         })
         .catch(err => {
-            console.error("AJAX hiba:", err);
-            alert("Nem sikerült betölteni az adatokat! (ID: " + personId + ")");
+            console.error("Hiba az adatok betöltésekor:", err);
+            alert("Hiba történt az adatlap megnyitásakor!");
         });
+}
+
+function openNemzetiDetails() {
+    // Inicializáljuk és megnyitjuk a második modalt
+    const nemzetiModal = new bootstrap.Modal(document.getElementById('mdl_NemzetiDetails'));
+    nemzetiModal.show();
 }
 
 function sortAgentTable(column, direction) {
