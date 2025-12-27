@@ -3,120 +3,6 @@
 {% block title %}{{config['APP_SHORTNAME']}} - Személyi biztonság{% endblock %}
 
 {% block content %}
-
-    <style>
-        main {
-            flex: 1;
-            overflow: hidden !important;
-            padding: 20px !important;
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 80px);
-        }
-
-        .navbar-unified {
-            height: 62px !important;
-            min-height: 62px !important;
-            max-height: 62px !important;
-            padding: 0 1rem !important;
-            display: flex !important;
-            align-items: center !important;
-            z-index: 1050;
-        }
-
-        .navbar-unified .container-fluid {
-            height: 100% !important;
-            display: flex !important;
-            align-items: center !important;
-        }
-
-        .nav-center-container {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .table-viewport {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background-color: rgba(10, 10, 10, 0.9);
-            border-radius: 8px;
-            border: 1px solid rgba(226, 178, 117, 0.2);
-            margin-top: 15px;
-        }
-
-        .table-scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #e2b275 #1a1a1a;
-        }
-
-        .sticky-th {
-            position: sticky !important;
-            top: 0 !important;
-            background-color: #121212 !important;
-            color: #e2b275 !important;
-            z-index: 100;
-            border-bottom: 2px solid #e2b275 !important;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            padding: 15px 10px !important;
-        }
-
-        /* 30 napon belül lejáró sor */
-        .row-expiring-soon td {
-            background-color: rgba(255, 50, 50, 0.08) !important;
-            box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.05);
-        }
-
-        /* Már lejárt sor */
-        .row-expired td {
-            background-color: rgba(255, 0, 0, 0.15) !important;
-        }
-
-        /* Dátum szöveg neon vörös */
-        .date-critical {
-            color: #ff4d4d !important;
-            font-weight: bold;
-            text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
-        }
-
-        /* Hover minden soron */
-        .agent-row:hover td {
-            background-color: rgba(226, 178, 117, 0.15) !important;
-        }
-
-        /* Webkit scrollbar */
-        .table-scroll-area::-webkit-scrollbar { width: 6px; height: 6px; }
-        .table-scroll-area::-webkit-scrollbar-thumb { background: #e2b275; border-radius: 10px; }
-
-
-        .sort-icon {
-            font-size: 0.7rem;
-            cursor: pointer;
-            color: rgba(226, 178, 117, 0.4); /* Alaphelyzetben halvány arany */
-            transition: color 0.2s, transform 0.1s;
-        }
-
-        .sort-icon:hover {
-            color: #e2b275; /* Hovernél erős arany */
-            transform: scale(1.3);
-        }
-
-        .sort-icon.active {
-            color: #ffffff; /* Aktív rendezés esetén fehér */
-        }
-
-    </style>
-
     <nav class="navbar navbar-expand-lg navbar-light rounded mt-2 mx-2 border navbar-unified"
          style="background: linear-gradient(90deg, rgba(226, 178, 117, 0.1) 0%, rgba(226, 178, 117, 0.7) 50%, rgba(226, 178, 117, 0.1) 100%);
                 backdrop-filter: blur(10px);
@@ -124,8 +10,8 @@
                 position: relative;">
         <div class="container-fluid position-relative">
             <a class="navbar-brand d-flex align-items-center" style="font-weight:bold; color:#e0e0e0;" href="/main">
-                <img src="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" height="30" class="d-inline-block align-top ms-2" alt="">
-                <span class="badge" style="background-color: #e2b275; color: #000; margin-left: 5px; font-weight: bold;">
+                <img src="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" height="30" class="d-inline-block align-top" alt="">
+                <span class="badge" style="background-color: #e2b275; color: #000; font-weight: bold;">
                     {{ config['APP_SHORTORG'] }}-<span style="color: #d02b2b;">B</span><span style="color: #ffffff;">f</span><span style="color: #2b823a;">R</span>
                 </span>
             </a>

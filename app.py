@@ -23,7 +23,6 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('A kért oldal eléréséhez be kell jelentkezned!')
-            # Itt adjuk hozzá a 'next' paramétert!
             return redirect(url_for('login', next=request.path))
         return f(*args, **kwargs)
     return decorated_function

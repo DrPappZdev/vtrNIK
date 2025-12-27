@@ -1,3 +1,113 @@
+html {
+    background-color: #121212 !important;
+}
+
+main {
+    flex: 1;
+    overflow: hidden !important;
+    padding: 20px;
+    padding-bottom: 70px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+}
+
+
+/* TÁBLÁZAT FORMÁZÁSA */
+
+.table-viewport {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: rgba(10, 10, 10, 0.9);
+    border-radius: 8px;
+    border: 1px solid rgba(226, 178, 117, 0.2);
+}
+
+.table-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden; /*auto volt*/
+    scrollbar-width: thin;
+    scrollbar-color: #e2b275 #1a1a1a;
+}
+
+.sticky-th {
+    position: sticky !important;
+    top: 0 !important;
+    background-color: #121212 !important;
+    color: #e2b275 !important;
+    z-index: 100;
+    border-bottom: 2px solid #e2b275 !important;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 15px 10px !important;
+}
+
+/* 30 napon belül lejáró sor */
+.row-expiring-soon td {
+    background-color: rgba(255, 50, 50, 0.08) !important;
+    box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.05);
+}
+
+/* Már lejárt sor */
+.row-expired td {
+    background-color: rgba(255, 0, 0, 0.15) !important;
+}
+
+/* Dátum szöveg neon vörös */
+.date-critical {
+    color: #ff4d4d !important;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+}
+
+/* Hover minden soron */
+.agent-row:hover td {
+    background-color: rgba(226, 178, 117, 0.15) !important;
+}
+
+/* Webkit scrollbar */
+.table-scroll-area::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-scroll-area::-webkit-scrollbar-thumb { background: #e2b275; border-radius: 10px; }
+
+
+.sort-icon {
+    font-size: 0.7rem;
+    cursor: pointer;
+    color: rgba(226, 178, 117, 0.4); /* Alaphelyzetben halvány arany */
+    transition: color 0.2s, transform 0.1s;
+}
+
+.sort-icon:hover {
+    color: #e2b275; /* Hovernél erős arany */
+    transform: scale(1.3);
+}
+
+.sort-icon.active {
+    color: #ffffff; /* Aktív rendezés esetén fehér */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* --- SZEMÉLYI BIZTONSÁGI KÁRTYA STÍLUS --- */
 /* Neon kártya belső elrendezése */
@@ -57,9 +167,7 @@
     to { opacity: 1; box-shadow: 0 0 15px #ff073a; }
 }
 
-
-
-/* --- 1. RENDSZER VISSZAJELZÉS (FLASH MODAL) --- */
+/* RENDSZER VISSZAJELZÉS (FLASH MODAL) */
 #systemFeedbackModal {
     display: none;
     position: fixed !important;
@@ -71,10 +179,10 @@
     padding: 0 !important;
     z-index: 1000000 !important;
 
-    /* ÁTTETSZŐBB FADE: 0.8 helyett 0.5 vagy 0.4 */
+    /* ÁTTETSZŐBB FADE */
     background-color: rgba(0, 0, 0, 0.4) !important;
 
-    /* ERŐSEBB BLUR: elegánsabbá teszi az áttetsző hátteret */
+    /* ERŐSEBB BLUR */
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
 
@@ -105,7 +213,7 @@
     text-align: center !important;
     box-shadow: 0 0 50px rgba(0,0,0,1) !important;
     flex-shrink: 0 !important; /* Ne engedje a body-flexnek összenyomni */
-    
+
     /* Beugró animáció */
     transform: scale(0.8);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -123,7 +231,7 @@
     line-height: 1.4;
 }
 
-/* A REND BEN GOMB (hogy ne a gyári Bootstrap legyen) */
+/* A RENDBEN GOMB (hogy ne a gyári Bootstrap legyen) */
 .feedback-btn {
     background: transparent !important;
     border: 1px solid #e2b275 !important;
@@ -141,7 +249,7 @@
     color: #000 !important;
 }
 
-/* --- 2. FOOTER FORMÁZÁSA --- */
+/* A FOOTER FORMÁZÁSA */
 footer {
     position: absolute;
     bottom: 0;
@@ -151,6 +259,19 @@ footer {
     white-space: nowrap;
     text-align: center;
     margin-bottom: 10px;
+}
+
+.footer-container {
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    padding: 15px 30px;
+    border-radius: 15px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white;
+    text-align: center;
+    width: calc(100% - 3rem);
+    margin-bottom: 1rem !important;
 }
 
 footer a {
@@ -165,9 +286,38 @@ footer a img {
 }
 
 footer a span {
-    font-size: 0.9em; /* Kicsit növelve az olvashatóságért */
+    font-size: 0.9em;
 }
 
 .footer-link span {
     font-size: 1.2em;
 }
+
+/* EGYSÉGESÍTETT NAVBAR STÍLUS */
+.navbar-unified {
+    height: 62px !important;
+    min-height: 62px !important;
+    max-height: 62px !important;
+    padding: 0 1rem !important;
+    margin-bottom: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    z-index: 1000;
+}
+
+.navbar-unified .container-fluid {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+}
+
+.nav-center-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+}
+
+/* FLASH */
+.flashes { list-style: none; padding: 10px; }
