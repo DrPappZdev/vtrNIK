@@ -356,34 +356,78 @@
 
 
 <!-- SzBT részleteket kibontó Modal eleje -->
-
 <div class="modal fade" id="mdl_NemzetiDetails" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: #121212; border: 2px solid #e2b275; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.9);">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content" style="background-color: #121212; border: 2px solid #e2b275; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.9);">
 
-            <div class="modal-header" style="border-bottom: 1px solid rgba(226, 178, 117, 0.2);">
-                <h5 class="modal-title fw-bold" style="color: #e2b275;">
-                    <i class="bi bi-shield-lock-fill me-2"></i> A Nemzeti SzBT részletei
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+            <form id="form_NemzetiDetails" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id" id="nemzeti_id">
+                <input type="hidden" name="agentId" id="nemzeti_agentId">
 
-            <div class="modal-body py-5 text-center">
-                <p class="text-white-50 italic">Kidolgozás alatt...</p>
-                <i class="bi bi-gear-wide-connected" style="font-size: 3rem; color: rgba(226, 178, 117, 0.3);"></i>
-            </div>
+                <div class="modal-header" style="border-bottom: 1px solid rgba(226, 178, 117, 0.2);">
+                    <h5 class="modal-title fw-bold" style="color: #e2b275;">
+                        <i class="bi bi-shield-lock-fill me-2"></i> Nemzeti SzBT Adatok Szerkesztése
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-            <div class="modal-footer" style="border-top: 1px solid rgba(226, 178, 117, 0.2);">
-                <button type="button" class="btn btn-sm" data-bs-dismiss="modal"
-                        style="background-color: #333; border: 1px solid #555; color: #fff; padding-left: 20px; padding-right: 20px;">
-                   Mégse
-                </button>
-            </div>
+                <div class="modal-body py-4 px-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small uppercase">Minősítési szint</label>
+                            <select class="form-select bg-dark text-white border-secondary" name="szbtNemMinSzint" id="nemzeti_szint">
+                                <option value="1">Korlátozott terjesztésű</option>
+                                <option value="2">Bizalmas</option>
+                                <option value="3">Titkos</option>
+                                <option value="4">Szigorúan titkos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small uppercase">Iktatószám</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" name="szbtNemIktsz" id="nemzeti_iktsz" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small uppercase">Lejárati dátum</label>
+                            <input type="date" class="form-control bg-dark text-white border-secondary" name="szbtNemLejaratiDatum" id="nemzeti_lejarat" required>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <hr style="border-color: rgba(226, 178, 117, 0.1);">
+                            <h6 style="color: #e2b275;" class="mb-3"><i class="bi bi-x-circle me-2"></i>Visszavonás (ha releváns)</h6>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small uppercase">Visszavonó iktatószám</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" name="szbtNemVisszavonIktsz" id="nemzeti_visszavon_iktsz">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small uppercase">Visszavonás dátuma</label>
+                            <input type="date" class="form-control bg-dark text-white border-secondary" name="szbtNemVisszavonDatum" id="nemzeti_visszavon_datum">
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <label class="form-label text-white-50 small uppercase">Csatolt dokumentum</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-file-earmark-pdf"></i></span>
+                                <input type="file" class="form-control bg-dark text-white border-secondary" name="szbtNemFajl" id="nemzeti_file">
+                            </div>
+                            <div id="nemzeti_current_file" class="mt-2 small text-info" style="display:none;">
+                                Jelenlegi fájl: <span id="nemzeti_file_name"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="border-top: 1px solid rgba(226, 178, 117, 0.2);">
+                    <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">Mégse</button>
+                    <button type="submit" class="btn btn-sm px-4" style="background-color: #e2b275; color: #121212; font-weight: bold;">
+                        <i class="bi bi-save me-2"></i>Adatok mentése
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-
-
 
 <!-- SzBT részleteket kibontó Modal vége -->
 
@@ -455,7 +499,7 @@
         border-top: 1px solid rgba(226, 178, 117, 0.2) !important;
     }
 
-        /* Arany színű Switch (kapcsoló) */
+    /* Arany színű Switch (kapcsoló) */
     .custom-switch {
         background-color: #333 !important;
         border-color: #e2b275 !important;

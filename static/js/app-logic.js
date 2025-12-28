@@ -4,18 +4,16 @@
  */
 
 window.addEventListener('load', function () {
-    console.log("App Logic 1.4 betöltve...");
-
-    // 1. BOOTSTRAP INICIALIZÁLÁS (Tooltip, Dropdown)
+    //console.log("App Logic 1.4 betöltve...");
     if (typeof bootstrap !== 'undefined') {
         const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         tooltips.forEach(t => new bootstrap.Tooltip(t));
-
         const dropdowns = document.querySelectorAll('.dropdown-toggle');
         dropdowns.forEach(dd => new bootstrap.Dropdown(dd));
     } else {
         console.error("HIBA: A Bootstrap motor nem töltődött be!");
     }
+
 
     // 2. MODAL FOCUS ÉS ENTER FIGYELÉS
     const searchModal = document.getElementById('mdl_Search');
@@ -30,7 +28,7 @@ window.addEventListener('load', function () {
     if (requesterData) {
         requesterData.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                executeSearch(); // Ez hívja meg a lenti globális függvényt
+                executeSearch();
             }
         });
     }
@@ -139,6 +137,7 @@ function copyName() {
  * Személyi adatlap megnyitása és feltöltése
  */
 function loadAndOpenDetails(personId) {
+
     console.log("Kattintás észlelve, ID:", personId);
     const modalEl = document.getElementById('mdl_PersonDetails');
 

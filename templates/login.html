@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="color-scheme" content="dark">
     <link rel="icon" href="{{ url_for('static', filename='img/' + config['APP_LOGO']) }}" type="image/png">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.css') }}">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Bejelentkezés</title>
     <style>
-html {
+        html {
             background-color: #121212 !important;
         }
         body {
@@ -76,18 +79,25 @@ html {
 </head>
 <body>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category if category != 'message' else 'info' }}">
-              {{ message }}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div id="systemFeedbackModal" class="show">
+                {% for category, message in messages %}
+                    <div class="feedback-card">
+                        <div class="mb-4">
+                            <i class="bi {{ 'bi-check-circle-fill' if category == 'success' else 'bi-exclamation-triangle-fill' }}"
+                               style="font-size: 4rem; color: {{ '#2ecc71' if category == 'success' else '#e74c3c' }};"></i>
+                        </div>
+                        <div class="feedback-text">{{ message }}</div>
+                        <button type="button" class="feedback-btn" onclick="closeFeedback()">OK</button>
+                    </div>
+                {% endfor %}
             </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-    <div class="login-container">
+          {% endif %}
+        {% endwith %}
+
+
+        <div class="login-container">
         <form method="POST" action="/logincheck">
             <h2 style="color: #e2b275">Bejelentkezés</h2>
             <div class="input-group">
@@ -96,5 +106,7 @@ html {
             <button type="submit">Belépés</button>
         </form>
     </div>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/app-logic.js') }}?v=1.2" defer></script>
 </body>
 </html>

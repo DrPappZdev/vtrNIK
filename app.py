@@ -1,7 +1,7 @@
 # app.py
 from pydoc import text
 
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
 from models import db, Users, Munkatarsak, Rendfokozat, Beosztasok, Jogok, AktivMunkatarsak
 from models import MinositesiSzint, NemzetiSzbt, NatoSzbt, EuSzbt, Szervezetifa
@@ -48,7 +48,6 @@ def permission_required(function_column):
             return f(*args, **kwargs)
         return decorated_function
     return decorator
-
 
 @app.route('/get_person_details/<int:person_id>')
 @login_required
@@ -299,7 +298,8 @@ def logincheck():
             table_name="user",
             record_id=0
         )
-        flash("Hibás adatok!", "danger")
+        flash(f"Hibás bejelentkezés!", "danger")
+
         return redirect(url_for('login'))
     return render_template('main.html')
 
